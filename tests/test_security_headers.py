@@ -13,7 +13,7 @@ EXPECTED_META = {
             default-src 'none';
             img-src 'self' data: https://www.linkedin.com;
             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com;
-            script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com;
+            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com;
             font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com;
             connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com;
             """
@@ -25,7 +25,7 @@ EXPECTED_META = {
 
 EXPECTED_HEADERS = {
     "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
-    "content-security-policy": "default-src 'none'; img-src 'self' data: https://www.linkedin.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com",
+    "content-security-policy": "default-src 'none'; img-src 'self' data: https://www.linkedin.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com",
     "x-content-type-options": "nosniff",
     "x-frame-options": "DENY",
     "referrer-policy": "no-referrer",
