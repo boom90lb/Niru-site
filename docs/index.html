@@ -7,13 +7,14 @@
     <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'none';
-        img-src 'self' data: https://www.linkedin.com https://assets.mlcdn.com;
+        img-src 'self' data: https://www.linkedin.com https://assets.mlcdn.com https://assets.mailerlite.com;
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://assets.mlcdn.com https://fonts.mlcdn.com;
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://groot.mailerlite.com https://assets.mailerlite.com;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://groot.mailerlite.com https://assets.mailerlite.com https://assets.mlcdn.com;
         font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://assets.mlcdn.com https://fonts.mlcdn.com;
-        connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com https://assets.mailerlite.com https://groot.mailerlite.com https://fonts.mlcdn.com;
+        connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com https://assets.mailerlite.com https://groot.mailerlite.com https://assets.mlcdn.com https://fonts.mlcdn.com;
         frame-src https://assets.mailerlite.com https://groot.mailerlite.com;
-        form-action 'self' https://assets.mailerlite.com;">
+        child-src https://assets.mailerlite.com https://groot.mailerlite.com;
+        form-action 'self' https://assets.mailerlite.com https://groot.mailerlite.com;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <title>Niru ML - Home</title>
@@ -97,6 +98,8 @@
             line-height: 1.75;
         }
     </style>
+    <link rel="icon" href="NIRUML.ico" type="image/x-icon">
+    <link rel="icon" href="NIRUML.png" type="image/png">
     <!-- MailerLite Universal -->
     <script>
         (function (w, d, e, u, f, l, n) {
