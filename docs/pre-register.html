@@ -8,10 +8,10 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'none';
         img-src 'self' data: https://www.linkedin.com https://assets.mlcdn.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://assets.mlcdn.com;
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://groot.mailerlite.com;
-        font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://assets.mlcdn.com;
-        connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com https://assets.mailerlite.com;">
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://assets.mlcdn.com https://fonts.mlcdn.com;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://groot.mailerlite.com https://assets.mailerlite.com;
+        font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://assets.mlcdn.com https://fonts.mlcdn.com;
+        connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com https://assets.mailerlite.com https://fonts.mlcdn.com;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <title>Niru ML - Pre-Register</title>
@@ -888,7 +888,7 @@
 
                                 <form class="ml-block-form"
                                     action="https://assets.mailerlite.com/jsonp/1860633/forms/168391568918579069/subscribe"
-                                    data-code="" method="post" target="_blank">
+                                    data-code="" method="post">
                                     <div class="ml-form-formContent">
 
 
@@ -1155,7 +1155,24 @@
                 <script src="https://groot.mailerlite.com/js/w/webforms.min.js?v176e10baa5e7ed80d35ae235be3d5024"
                     type="text/javascript"></script>
                 <script>
-                    fetch("https://assets.mailerlite.com/jsonp/1860633/forms/168391568918579069/takel")
+                    (function (m, a, i, l, e, r) {
+                        m['MailerLiteObject'] = e;
+                        function f() {
+                            var c = { a: arguments, q: [] };
+                            var r = this.push(c);
+                            return typeof r !== 'number' ? r : f.bind(c.q);
+                        }
+                        f.q = f.q || [];
+                        m[e] = m[e] || f.bind(f.q);
+                        m[e].q = m[e].q || f.q;
+                        r = a.createElement(i);
+                        var _ = a.getElementsByTagName(i)[0];
+                        r.async = 1;
+                        r.src = l + '?' + (~~(new Date().getTime() / 1000000));
+                        _.parentNode.insertBefore(r, _);
+                    })(window, document, 'script', 'https://assets.mailerlite.com/js/universal.js', 'ml');
+
+                    ml('account', '1860633');
                 </script>
             </div>
         </section>
