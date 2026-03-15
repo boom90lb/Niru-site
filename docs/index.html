@@ -4,160 +4,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO -->
+    <title>Niru ML - Automated Machine Learning Operations</title>
+    <meta name="description" content="Niru ML automates the most time-intensive parts of the ML development lifecycle, from model design through evaluation, shipping better models faster.">
+    <meta property="og:title" content="Niru ML Automated Machine Learning Operations">
+    <meta property="og:description" content="End-to-end ML automation that reduces development cycles and compute costs.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://niru.ml/">
+    <meta name="twitter:card" content="summary">
+
+    <!-- Security -->
     <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'none';
         img-src 'self' data: https://www.linkedin.com https://assets.mlcdn.com https://assets.mailerlite.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://assets.mlcdn.com https://fonts.mlcdn.com;
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://groot.mailerlite.com https://assets.mailerlite.com https://assets.mlcdn.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://assets.mlcdn.com https://fonts.mlcdn.com;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://groot.mailerlite.com https://assets.mailerlite.com https://assets.mlcdn.com;
         font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://assets.mlcdn.com https://fonts.mlcdn.com;
-        connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.tailwindcss.com https://assets.mailerlite.com https://groot.mailerlite.com https://assets.mlcdn.com https://fonts.mlcdn.com;
+        connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://assets.mailerlite.com https://groot.mailerlite.com https://assets.mlcdn.com https://fonts.mlcdn.com;
         frame-src https://assets.mailerlite.com https://groot.mailerlite.com;
         child-src https://assets.mailerlite.com https://groot.mailerlite.com;
         form-action 'self' https://assets.mailerlite.com https://groot.mailerlite.com;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
-    <title>Niru ML - Home</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=Work+Sans:wght@400;700&display=swap"
-        rel="stylesheet">
-    <style>
-        /* Apply Work Sans font to the body (default) */
-        body {
-            font-family: 'Work Sans', sans-serif;
-            /* Updated default font */
-            background-color: #000000;
-            /* Black background */
-            color: #FFFFFF;
-            /* White text */
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            /* Ensure footer stays at bottom */
-        }
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=Work+Sans:wght@400;700&display=swap" rel="stylesheet">
 
-        /* Apply EB Garamond to headings */
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: 'EB Garamond', serif;
-        }
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
 
-        /* Simple separator line style */
-        .separator {
-            width: 60px;
-            height: 1px;
-            background-color: #FFFFFF;
-            margin: 1.5rem auto;
-        }
-
-        /* Footer styling */
-        footer {
-            margin-top: auto;
-        }
-
-        /* Basic link styling */
-        a {
-            color: #A0A0A0;
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: #FFFFFF;
-        }
-
-        /* Style for social icons */
-        .social-icon {
-            display: inline-block;
-            padding: 0.5rem;
-            border: 1px solid #A0A0A0;
-            border-radius: 0.25rem;
-            margin: 0 0.5rem;
-            font-family: 'Work Sans', sans-serif;
-            /* Ensure icons use default font */
-        }
-
-        .social-icon:hover {
-            border-color: #FFFFFF;
-        }
-
-        /* Logo styling */
-        .logo-img {
-            max-height: 60px;
-            width: auto;
-        }
-
-        /* Line-height and size for body paragraphs */
-        main p {
-            line-height: 1.75;
-        }
-    </style>
+    <!-- Favicon -->
     <link rel="icon" href="NIRUML.ico" type="image/x-icon">
     <link rel="icon" href="NIRUML.png" type="image/png">
+
     <!-- MailerLite Universal -->
     <script>
         (function (w, d, e, u, f, l, n) {
             w[f] = w[f] || function () {
-                (w[f].q = w[f].q || [])
-                    .push(arguments);
+                (w[f].q = w[f].q || []).push(arguments);
             }, l = d.createElement(e), l.async = 1, l.src = u,
                 n = d.getElementsByTagName(e)[0], n.parentNode.insertBefore(l, n);
-        })
-            (window, document, 'script', 'https://assets.mailerlite.com/js/universal.js', 'ml');
+        })(window, document, 'script', 'https://assets.mailerlite.com/js/universal.js', 'ml');
         ml('account', '1860633');
     </script>
-    <!-- End MailerLite Universal -->
 </head>
 
-<body class="flex flex-col items-center justify-between p-8">
+<body>
+    <div id="site-header"></div>
+    <noscript>
+        <header class="site-header">
+            <div><a href="index.html"><img src="NIRUML.png" alt="Niru ML Logo" class="logo-img"></a></div>
+            <nav class="site-nav">
+                <a href="index.html" class="active">Home</a>
+                <a href="about.html">About</a>
+                <a href="pre-register.html">Pre-Register</a>
+            </nav>
+        </header>
+    </noscript>
 
-    <header class="w-full max-w-4xl text-center mb-16 mt-8">
-        <div class="inline-block mb-4">
-            <img src="NIRUML.png" alt="Niru ML Logo" class="logo-img"
-                onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xl font-bold\'>NIRU ML</span>'; console.error('Failed to load image: NIRUML.png')">
-        </div>
-        <nav class="mt-4">
-            <a href="index.html" class="text-white font-bold mx-2">Home</a>
-            <a href="about.html" class="text-gray-400 hover:text-white mx-2">About</a>
-            <a href="pre-register.html" class="text-gray-400 hover:text-white mx-2">Pre-Register</a>
-        </nav>
-    </header>
+    <main class="site-main centered">
+        <div class="separator"></div>
+        <h1>NEOTERIC MACHINE LEARNING</h1>
+        <div class="separator"></div>
 
-    <main class="w-full max-w-2xl text-center flex-grow flex flex-col items-center justify-center px-4">
-        <div class="separator"></div>
-        <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4">
-            PROVIDING COST-EFFICIENT & <br> SOTA AI SOLUTIONS
-        </h1>
-        <div class="separator"></div>
-        <p class="text-sm md:text-base text-gray-300">
-            Named after the Manchu word for 'arrow', or 'to aim', Niru ML precisely targets optimal model architectures
-            while minimizing computational costs. Niru units were known for their mobility and speed, making them
-            effective for reconnaissance, flanking maneuvers, and quick strikes against enemy positions. They played a
-            critical role in the Qing military's adaptability and responsiveness on the battlefield.
+        <p>
+            Inspired by the Manchu word for 'arrow', or 'to aim', Niru ML precisely targets optimal model architectures and training pipelines, all with minimal manual intervention.
+           
         </p>
+
+        <p>
+            We automate the most time-intensive and specialization-dependent stages of the ML development lifecycle, so we can provide desired model outcomes in less time, at a fraction of the compute cost.
+
+        </p>
+
+        <p>
+            Niru units were known for their mobility and speed, making them effective for reconnaissance, flanking maneuvers, and quick strikes against enemy positions.
+            
+            They played a critical role in the Qing military's adaptability and responsiveness on the battlefield through cavalry tactics.
+
+            Their signature weapon, the reflex bow, boasted among the highest known draw weights in history.
+
+        </p>
+
+        <p>
+            Machine learning has boundless potential, but like any powerful tool, such as the reflex bow, it requires expertise to wield effectively. We provide this expertise in the form of AMLO.
+
+        </p>
+
+        <a href="pre-register.html" class="cta-link">JOIN THE WAITLIST →</a>
     </main>
 
-    <footer class="w-full max-w-4xl text-center text-xs text-gray-400 mt-16 mb-8">
-        <div class="mb-4">
-            <a href="mailto:brendonrt@niru.ml" class="hover:text-white mx-2">Email: brendonrt@niru.ml</a> |
-            <a href="https://www.linkedin.com/in/brendon-rt/" target="_blank" rel="noopener noreferrer"
-                class="hover:text-white mx-2">Founder Linkedin</a> |
-            <a href="https://www.linkedin.com/company/niru-ml/" target="_blank" rel="noopener noreferrer"
-                class="hover:text-white mx-2">Company Linkedin</a>
-        </div>
-        <div>
-            <a href="https://www.linkedin.com/company/niru-ml/" target="_blank" rel="noopener noreferrer"
-                class="social-icon">in</a>
-        </div>
-        <p class="mt-4">&copy; 2025 Niru ML. All rights reserved.</p>
-    </footer>
+    <div id="site-footer"></div>
+    <noscript>
+        <footer class="site-footer">
+            <div class="footer-links">
+                <a href="mailto:brendonrt@niru.ml">brendonrt@niru.ml</a> |
+                <a href="https://www.linkedin.com/in/brendon-rt/" target="_blank" rel="noopener noreferrer">Founder LinkedIn</a> |
+                <a href="https://www.linkedin.com/company/niru-ml/" target="_blank" rel="noopener noreferrer">Company LinkedIn</a>
+            </div>
+            <div><a href="https://www.linkedin.com/company/niru-ml/" target="_blank" rel="noopener noreferrer" class="social-icon">in</a></div>
+            <p class="copyright">&copy; 2026 Niru ML. All rights reserved.</p>
+        </footer>
+    </noscript>
 
+    <script src="components.js"></script>
 </body>
 
 </html>

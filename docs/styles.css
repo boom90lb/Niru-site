@@ -1,0 +1,319 @@
+/* ============================================================
+   Niru ML - Design System
+   Single source of truth for all styles across the site.
+   ============================================================ */
+
+/* --- Design Tokens (CSS Custom Properties) --- */
+:root {
+    /* Colors */
+    --color-bg:            #000000;
+    --color-text:          #FFFFFF;
+    --color-text-muted:    #A0A0A0;
+    --color-text-subtle:   #6B7280;
+    --color-border:        #374151;
+    --color-border-hover:  #FFFFFF;
+    --color-accent:        #D1D5DB;
+
+    /* Typography */
+    --font-body:    'Work Sans', sans-serif;
+    --font-heading: 'EB Garamond', serif;
+    --line-height:  1.75;
+
+    /* Spacing */
+    --space-xs:    0.25rem;
+    --space-sm:    0.5rem;
+    --space-md:    1rem;
+    --space-lg:    1.5rem;
+    --space-xl:    2rem;
+    --space-2xl:   3rem;
+    --space-3xl:   4rem;
+
+    /* Layout */
+    --max-width-content:  42rem;   /* ~672px - main text */
+    --max-width-wide:     56rem;   /* ~896px - header/footer */
+
+    /* Transitions */
+    --transition-fast: 0.3s ease;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--space-xl);
+    line-height: var(--line-height);
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    margin-bottom: var(--space-md);
+}
+
+h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: var(--space-md);
+}
+
+h3 {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    margin-bottom: var(--space-sm);
+}
+
+p {
+    color: var(--color-accent);
+    line-height: var(--line-height);
+    margin-bottom: var(--space-md);
+    font-size: 0.9375rem;
+}
+
+strong {
+    color: var(--color-text);
+    font-weight: 700;
+}
+
+/* --- Links --- */
+a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-text);
+}
+
+/* --- Separator --- */
+.separator {
+    width: 60px;
+    height: 1px;
+    background-color: var(--color-text);
+    margin: var(--space-lg) auto;
+}
+
+/* --- Header --- */
+.site-header {
+    width: 100%;
+    max-width: var(--max-width-wide);
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+    margin-top: var(--space-xl);
+}
+
+.logo-img {
+    max-height: 60px;
+    width: auto;
+}
+
+.site-nav {
+    margin-top: var(--space-md);
+}
+
+.site-nav a {
+    margin: 0 var(--space-sm);
+    font-size: 0.875rem;
+}
+
+.site-nav a.active {
+    color: var(--color-text);
+    font-weight: 700;
+}
+
+/* --- Main Content --- */
+.site-main {
+    width: 100%;
+    max-width: var(--max-width-content);
+    flex-grow: 1;
+    padding: 0 var(--space-md);
+}
+
+.site-main.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.site-main.text-center {
+    text-align: center;
+}
+
+/* --- Sections --- */
+section {
+    margin-bottom: var(--space-2xl);
+}
+
+/* --- Lists --- */
+.site-main ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: var(--space-sm);
+}
+
+.site-main ul li {
+    margin-bottom: var(--space-sm);
+    line-height: var(--line-height);
+    padding-left: 1.5em;
+    position: relative;
+    color: var(--color-accent);
+    font-size: 0.9375rem;
+}
+
+.site-main ul li::before {
+    content: '•';
+    color: var(--color-text);
+    font-weight: bold;
+    display: inline-block;
+    position: absolute;
+    left: 0.5em;
+}
+
+/* --- Pillar Cards --- */
+.pillars {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    margin: var(--space-xl) 0;
+    text-align: left;
+}
+
+.pillar {
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: var(--space-lg);
+    transition: border-color var(--transition-fast);
+}
+
+.pillar:hover {
+    border-color: var(--color-text-muted);
+}
+
+.pillar h3 {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+.pillar p {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+/* --- CTA Button --- */
+.cta-link {
+    display: inline-block;
+    border: 1px solid var(--color-text-muted);
+    border-radius: 4px;
+    padding: var(--space-sm) var(--space-lg);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+    margin-top: var(--space-lg);
+}
+
+.cta-link:hover {
+    border-color: var(--color-text);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--color-text);
+}
+
+/* --- Image --- */
+.content-image {
+    max-width: 280px;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+}
+
+/* --- Founder Attribution --- */
+.attribution {
+    font-size: 0.75rem;
+    color: var(--color-text-subtle);
+    margin-top: var(--space-md);
+}
+
+/* --- Footer --- */
+.site-footer {
+    width: 100%;
+    max-width: var(--max-width-wide);
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: var(--space-3xl);
+    margin-bottom: var(--space-xl);
+}
+
+.footer-links {
+    margin-bottom: var(--space-md);
+}
+
+.footer-links a {
+    margin: 0 var(--space-sm);
+}
+
+.social-icon {
+    display: inline-block;
+    padding: var(--space-sm);
+    border: 1px solid var(--color-text-muted);
+    border-radius: var(--space-xs);
+    margin: 0 var(--space-sm);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    transition: border-color var(--transition-fast);
+}
+
+.social-icon:hover {
+    border-color: var(--color-text);
+}
+
+.copyright {
+    margin-top: var(--space-md);
+}
+
+/* --- MailerLite Form Container --- */
+.form-container {
+    width: 100%;
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+}
+
+/* --- Responsive --- */
+@media (min-width: 640px) {
+    .pillars {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}
