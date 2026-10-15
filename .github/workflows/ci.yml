@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.15"
+          allow-prereleases: true
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Install Node dependencies
+        run: npm ci
+      - name: Install Python verification dependencies
+        run: make install-dev
+      - name: Install Chromium for browser verification
+        run: npx playwright install --with-deps chromium
+      - name: Verify source and built output
+        run: make check
+      - name: Verify committed GitHub Pages fallback projection
+        run: test -z "$(git status --porcelain --untracked-files=all -- docs)"

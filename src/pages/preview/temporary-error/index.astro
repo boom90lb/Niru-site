@@ -1,0 +1,19 @@
+---
+import MessagePage from "../../../components/MessagePage.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Request unavailable - Niru ML"
+  description="The technical-preview request could not be confirmed."
+  canonicalPath="/preview/temporary-error/"
+  currentPath="/preview/temporary-error/"
+  robots="noindex,nofollow,noarchive"
+>
+  <MessagePage
+    title="We could not confirm your request."
+    message="The request service is not available right now. This site did not save your request, though the service may have received it. Try again later. A second request does not create a duplicate."
+    actionHref="/preview/"
+    actionLabel="Return to the request"
+  />
+</BaseLayout>

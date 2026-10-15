@@ -1,0 +1,7 @@
+{
+  "note": "How the simulated full-scale comparison ends over the first seeds of src/lib/trace/simulate.ts.",
+  "seeds": 500,
+  "supported": 300,
+  "inconclusive": 89,
+  "refuted": 111
+}

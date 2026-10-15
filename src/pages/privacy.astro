@@ -1,0 +1,34 @@
+---
+import { getEntry, render } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const page = await getEntry("pages", "privacy");
+if (!page) throw new Error("Missing privacy content entry");
+const { Content } = await render(page);
+const reviewed = page.data.lastReviewed
+  ? new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    }).format(page.data.lastReviewed)
+  : "Review date unavailable";
+---
+
+<BaseLayout
+  title={`${page.data.title} - Niru ML`}
+  description={page.data.description}
+  canonicalPath="/privacy/"
+  currentPath="/privacy/"
+>
+  <article class="column">
+    <header class="doc-head">
+      <h1>{page.data.title}</h1>
+      <p class="lede">{page.data.description}</p>
+      <p class="note">
+        Last reviewed <time datetime={page.data.lastReviewed?.toISOString()}>{reviewed}</time>
+      </p>
+    </header>
+    <div class="prose"><Content /></div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { smart } from "../../lib/typography.ts";
+
+const page = await getEntry("pages", "research");
+if (!page) throw new Error("Missing research content entry");
+const { Content } = await render(page);
+const notes = (await getCollection("notes")).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf(),
+);
+const { title, description, headline, lede } = page.data;
+const date = (d: Date) =>
+  new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(d);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/research/"
+  currentPath="/research/"
+>
+  <div class="column">
+    <header class="doc-head">
+      <h1>{headline}</h1>
+      <p class="lede">{smart(lede ?? "")}</p>
+    </header>
+    <div class="prose"><Content /></div>
+    <h2 class="sr-only" id="notes-title">Notes</h2>
+    <ul class="doc-list note-list" aria-labelledby="notes-title">
+      {
+        notes.map((note) => (
+          <li>
+            <a href={`/research/${note.id}/`}>
+              <span class="doc-title">{note.data.title}</span>
+              <span class="doc-meta">
+                {note.data.status} · {date(note.data.published)}
+              </span>
+              <span class="doc-summary">{smart(note.data.description)}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

@@ -1,0 +1,9 @@
+.astro/
+docs/
+dist/
+node_modules/
+plans/
+public/NIRUML.ico
+public/NIRUML.png
+docs/NIRUML.ico
+docs/NIRUML.png

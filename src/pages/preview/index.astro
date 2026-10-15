@@ -1,0 +1,54 @@
+---
+import { getEntry, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+const page = await getEntry("pages", "preview");
+if (!page) throw new Error("Missing conversation content entry");
+const { Content } = await render(page);
+const { title, description, headline, lede, boundary } = page.data;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/preview/"
+  currentPath="/preview/"
+>
+  <div class="column">
+    <header class="doc-head">
+      <h1>{headline}</h1><p class="lede">
+        {lede}
+      </p>
+    </header>
+    <div class="prose"><Content /></div>
+    <section class="conversation" aria-labelledby="conversation-title">
+      <h2 id="conversation-title">Write to Brendon.</h2>
+      <p>
+        <a class="button" href="mailto:brendonrt@niru.ml?subject=Conversation%20about%20Niru%20ML"
+          >brendonrt@niru.ml</a
+        >
+      </p>
+      <p class="note">
+        This opens your email app. We do not collect information through a form on this site.
+      </p>
+    </section>
+    {boundary && <p class="boundary">{boundary}</p>}
+    <p><a href="/lab/#status">What AMLO can do today</a></p>
+  </div>
+</BaseLayout>
+<style>
+  .conversation {
+    border-block: 1px solid var(--rule);
+    padding: 0.5rem 0 1rem;
+    margin: 2rem 0;
+  }
+  .conversation h2 {
+    margin-top: 1rem;
+  }
+  .conversation .button {
+    gap: 2rem;
+  }
+  .boundary {
+    color: var(--ink-2);
+    font-size: 1rem;
+  }
+</style>

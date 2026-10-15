@@ -1,0 +1,428 @@
+---
+/**
+ * The spectral study's three figures, drawn at build time from
+ * `src/data/spectral-certificate.json`: the loss curves, the diagnostic rows
+ * across widths, and the shared key and value control. The tables after the
+ * note give every value the figures show.
+ */
+import raw from "../data/spectral-certificate.json";
+import { linear, log2, marker, polyline, round } from "../lib/plot.ts";
+
+interface Point {
+  log2_lr: number;
+  loss: number;
+}
+interface Curve {
+  width: number;
+  points: Point[];
+  minimum: { log2_lr: number; loss: number };
+}
+interface Row {
+  width: number;
+  act_rms_ratio?: number;
+  W_op_norm_ratio?: number;
+  dW_op_norm_ratio?: number;
+}
+interface Act3 {
+  r: number;
+  coord_ratio: number;
+  spectral_ratio: number;
+}
+interface Props {
+  figure: "loss" | "certificate" | "kv";
+}
+const { figure } = Astro.props;
+const data = raw as unknown as {
+  settings: { band: [number, number]; widths: number[] };
+  loss_zero_output: number;
+  curves: Record<string, Curve[]>;
+  certificate: Record<string, { rows: Row[] }>;
+  act3: Act3[];
+};
+
+const [bandLo, bandHi] = data.settings.band;
+const widths = data.settings.widths;
+const SCHEMES = [
+  { key: "sp", name: "SP" },
+  { key: "umup", name: "u-μP rules in this toy" },
+  { key: "mup", name: "Input-rate variant" },
+] as const;
+
+// Figure 1: final loss against learning rate, one curve for each width.
+const P1 = { w: 200, h: 196, left: 30, right: 6, top: 38, bottom: 34 };
+const x1 = linear([-7, 5], [P1.left, P1.w - P1.right]);
+const y1 = linear([0.7, 2.4], [P1.h - P1.bottom, P1.top]);
+const lossPanels = SCHEMES.map(({ key, name }) => {
+  const curves = data.curves[key]!;
+  const origin = curves[0]!.minimum.log2_lr;
+  const inside = (p: Point) => p.log2_lr - origin >= -7 && p.log2_lr - origin <= 5;
+  const lines = curves.map((c, i) => ({
+    i,
+    d: polyline(
+      c.points.filter(inside).map((p) => [x1(p.log2_lr - origin), y1(p.loss)] as [number, number]),
+    ),
+    min: [x1(c.minimum.log2_lr - origin), y1(c.minimum.loss)] as [number, number],
+  }));
+  const last = curves.at(-1)!;
+  const shift = 2 ** (last.minimum.log2_lr - origin);
+  const label = shift < 0.95 ? `η*/${Math.round(1 / shift)}` : `${shift.toFixed(1)} η*`;
+  return { name, lines, label };
+});
+
+// Figure 2: hidden-layer diagnostic summaries at the rate tuned at width 64.
+const P2 = { w: 200, h: 196, left: 22, right: 8, top: 24, bottom: 34 };
+const x2 = log2([48, 1400], [P2.left, P2.w - P2.right]);
+const y2 = log2([0.5, 16], [P2.h - P2.bottom, P2.top]);
+const SERIES = [
+  { key: "act_rms_ratio", name: "activation RMS", shape: "circle", dx: -5 },
+  { key: "W_op_norm_ratio", name: "‖W‖", shape: "square", dx: 0 },
+  { key: "dW_op_norm_ratio", name: "‖ΔW‖", shape: "triangle", dx: 5 },
+] as const;
+const outside = (v: number) => v < bandLo || v > bandHi;
+const certPanels = SCHEMES.map(({ key, name }) => {
+  const rows = data.certificate[key]!.rows;
+  const points = SERIES.flatMap((s) =>
+    rows
+      .filter((r) => r[s.key] !== undefined)
+      .map((r) => ({
+        shape: s.shape,
+        x: x2(r.width) + s.dx,
+        y: y2(r[s.key]!),
+        out: outside(r[s.key]!),
+      })),
+  );
+  // Label the widest model's values that leave the band: the activation row,
+  // and the largest of the two spectral rows.
+  const widest = rows.at(-1)!;
+  const notes: Array<{ x: number; y: number; text: string }> = [];
+  const act = widest.act_rms_ratio;
+  if (act !== undefined && outside(act))
+    notes.push({
+      x: x2(widest.width) - 9,
+      y: y2(act) + (act < 1 ? 10 : 0),
+      text: act.toFixed(act < 1 ? 3 : 2),
+    });
+  const spectral = [widest.W_op_norm_ratio, widest.dW_op_norm_ratio].filter(
+    (v): v is number => v !== undefined && outside(v),
+  );
+  if (spectral.length > 0) {
+    const v = Math.max(...spectral);
+    notes.push({ x: x2(widest.width) - 9, y: y2(v), text: v.toFixed(1) });
+  }
+  return { name, points, notes, clean: notes.length === 0 };
+});
+const ratioTicks = [1, 2, 4, 8, 16];
+
+// Figure 3: one key and value block copied r times. Not trained.
+const P3 = { w: 400, h: 220, left: 34, right: 112, top: 16, bottom: 36 };
+const x3 = log2([0.8, 20], [P3.left, P3.w - P3.right]);
+const y3 = linear([0.7, 2.7], [P3.h - P3.bottom, P3.top]);
+const act3 = data.act3;
+const limit = polyline(
+  Array.from({ length: 41 }, (_, i) => {
+    const r = 2 ** (i / 10);
+    return [x3(r), y3((1 + Math.sqrt(r)) / 2)] as [number, number];
+  }),
+);
+const coordLine = polyline(act3.map((a) => [x3(a.r), y3(a.coord_ratio)] as [number, number]));
+const specLine = polyline(act3.map((a) => [x3(a.r), y3(a.spectral_ratio)] as [number, number]));
+const lastAct3 = act3.at(-1)!;
+---
+
+{
+  figure === "loss" && (
+    <figure class="breakout spectral-figure" aria-labelledby="fig1-caption">
+      <svg
+        class="plot plot--legend"
+        viewBox="0 0 400 22"
+        role="img"
+        aria-label="Widths 64, 128, 256, 512 and 1024, from lighter to darker."
+      >
+        <text x="0" y="15">
+          width
+        </text>
+        {widths.map((w, i) => (
+          <g>
+            <line
+              class:list={["curve", `w${i}`]}
+              x1={48 + i * 70}
+              y1="10"
+              x2={70 + i * 70}
+              y2="10"
+            />
+            <text x={75 + i * 70} y="15">
+              {w}
+            </text>
+          </g>
+        ))}
+      </svg>
+      <div class="figure-row figure-row--3">
+        {lossPanels.map((panel) => (
+          <svg
+            class="plot plot--panel"
+            viewBox={`0 0 ${P1.w} ${P1.h}`}
+            role="img"
+            aria-label={`Final loss against learning rate for five widths, ${panel.name}. At width 1024 the best rate is ${panel.label}.`}
+          >
+            <text x={P1.left} y="12" class="label-strong">
+              {panel.name}
+            </text>
+            <text x={P1.left} y="27" class="label-faint">
+              best rate at width 1024 is {panel.label}
+            </text>
+            {[1, 1.5].map((v) => (
+              <g>
+                <line class="grid" x1={P1.left} x2={P1.w - P1.right} y1={y1(v)} y2={y1(v)} />
+                <text x={P1.left - 5} y={y1(v) + 4} text-anchor="end">
+                  {v.toFixed(1)}
+                </text>
+              </g>
+            ))}
+            <line
+              class="grid"
+              x1={P1.left}
+              x2={P1.w - P1.right}
+              y1={y1(data.loss_zero_output)}
+              y2={y1(data.loss_zero_output)}
+            />
+            <text x={P1.left - 5} y={y1(data.loss_zero_output) + 4} text-anchor="end">
+              ln 10
+            </text>
+            <line class="tuned" x1={x1(0)} x2={x1(0)} y1={P1.top} y2={P1.h - P1.bottom} />
+            {panel.lines.map((line) => (
+              <path class:list={["curve", `w${line.i}`]} d={line.d} />
+            ))}
+            {panel.lines.map((line) => (
+              <circle
+                class:list={[`m${line.i}`]}
+                cx={round(line.min[0])}
+                cy={round(line.min[1])}
+                r="2.6"
+              />
+            ))}
+            <line
+              class="axis"
+              x1={P1.left}
+              x2={P1.w - P1.right}
+              y1={P1.h - P1.bottom}
+              y2={P1.h - P1.bottom}
+            />
+            {[-6, -4, -2, 0, 2, 4].map((v) => (
+              <text x={x1(v)} y={P1.h - P1.bottom + 14} text-anchor="middle">
+                {v === 0 ? "η*" : v > 0 ? `+${v}` : `−${-v}`}
+              </text>
+            ))}
+            <text
+              x={(P1.left + P1.w - P1.right) / 2}
+              y={P1.h - 4}
+              text-anchor="middle"
+              class="label-faint"
+            >
+              learning rate, log₂ steps from η*
+            </text>
+          </svg>
+        ))}
+      </div>
+      <figcaption id="fig1-caption">
+        Figure 1. Final held-out loss against learning rate, the mean of three seeds, for each
+        width. η* is the best rate at width 64, and the dotted line marks it. A dot marks the best
+        rate of each width; the label gives it at width 1024. A failed run counts at ln 10.
+      </figcaption>
+    </figure>
+  )
+}
+
+{
+  figure === "certificate" && (
+    <figure class="breakout spectral-figure" aria-labelledby="fig2-caption">
+      <svg
+        class="plot plot--legend"
+        viewBox="0 0 400 22"
+        role="img"
+        aria-label="Circles mark activation RMS, squares the operator norm of W and triangles the operator norm of delta W. The shaded area is the band from 0.80 to 1.25."
+      >
+        <circle class="dot" cx="5" cy="10" r="3.4" />
+        <text x="14" y="15">
+          activation RMS
+        </text>
+        <path class="dot" d={marker("square", 128, 10)} />
+        <text x="137" y="15">
+          ‖W‖
+        </text>
+        <path class="dot" d={marker("triangle", 186, 10)} />
+        <text x="195" y="15">
+          ‖ΔW‖
+        </text>
+        <rect class="band" x="252" y="4" width="16" height="12" />
+        <text x="274" y="15">
+          band {bandLo.toFixed(2)}–{bandHi.toFixed(2)}
+        </text>
+      </svg>
+      <div class="figure-row figure-row--3">
+        {certPanels.map((panel) => (
+          <svg
+            class="plot plot--panel"
+            viewBox={`0 0 ${P2.w} ${P2.h}`}
+            role="img"
+            aria-label={`Hidden-layer summary ratios at five widths, ${panel.name}. No per-seed uncertainty is available. ${
+              panel.clean
+                ? "Every plotted mean stays inside the band; input and output layers are excluded."
+                : `Plotted means outside the band at width 1024 are ${panel.notes.map((n) => n.text).join(" and ")}. Input and output layers are excluded.`
+            }`}
+          >
+            <text x={P2.left} y="12" class="label-strong">
+              {panel.name}
+            </text>
+            <rect
+              class="band"
+              x={P2.left}
+              width={P2.w - P2.right - P2.left}
+              y={y2(bandHi)}
+              height={y2(bandLo) - y2(bandHi)}
+            />
+            {ratioTicks.map((v) => (
+              <g>
+                {v !== 1 && (
+                  <line class="grid" x1={P2.left} x2={P2.w - P2.right} y1={y2(v)} y2={y2(v)} />
+                )}
+                <text x={P2.left - 5} y={y2(v) + 4} text-anchor="end">
+                  {v}
+                </text>
+              </g>
+            ))}
+            {panel.points.map((p) =>
+              p.shape === "circle" ? (
+                <circle
+                  class:list={[p.out ? "out" : "dot"]}
+                  cx={round(p.x)}
+                  cy={round(p.y)}
+                  r="3.2"
+                />
+              ) : (
+                <path class:list={[p.out ? "out" : "dot"]} d={marker(p.shape, p.x, p.y, 3.4)} />
+              ),
+            )}
+            {panel.notes.map((n) => (
+              <text x={round(n.x)} y={round(n.y) + 4} text-anchor="end" class="out-label">
+                {n.text}
+              </text>
+            ))}
+            {panel.clean && (
+              <text x={P2.w - P2.right} y={y2(bandHi) - 8} text-anchor="end" class="label-faint">
+                plotted means inside
+              </text>
+            )}
+            <line
+              class="axis"
+              x1={P2.left}
+              x2={P2.w - P2.right}
+              y1={P2.h - P2.bottom}
+              y2={P2.h - P2.bottom}
+            />
+            {widths.map((w) => (
+              <text x={x2(w)} y={P2.h - P2.bottom + 14} text-anchor="middle">
+                {w}
+              </text>
+            ))}
+            <text
+              x={(P2.left + P2.w - P2.right) / 2}
+              y={P2.h - 4}
+              text-anchor="middle"
+              class="label-faint"
+            >
+              width
+            </text>
+          </svg>
+        ))}
+      </div>
+      <figcaption id="fig2-caption">
+        Figure 2. Hidden-layer diagnostic summaries at the rate tuned at width 64, as ratios to
+        their value at width 64, on a log scale. Marks in the accent color lie outside the shaded
+        0.80–1.25 band. Norm values average successful seeds and the two hidden matrices;
+        activation RMS is from the second hidden layer. Input and output layers are excluded, and
+        per-seed uncertainty is unavailable. An inside-band mean is not a transfer certificate. The
+        variant was chosen after inspection; its readout lies outside the band at widths 512 and
+        1024.
+      </figcaption>
+    </figure>
+  )
+}
+
+{
+  figure === "kv" && (
+    <figure class="spectral-figure" aria-labelledby="fig3-caption">
+      <svg
+        class="plot plot--single"
+        viewBox={`0 0 ${P3.w} ${P3.h}`}
+        role="img"
+        aria-label={`One key and value block copied 1 to 16 times. The activation RMS stays near 1. The operator norm grows to ${lastAct3.spectral_ratio.toFixed(2)} at 16 copies and follows the random-matrix limit (1 + square root of r) / 2.`}
+      >
+        <rect
+          class="band"
+          x={P3.left}
+          width={P3.w - P3.right - P3.left}
+          y={y3(bandHi)}
+          height={y3(bandLo) - y3(bandHi)}
+        />
+        {[1, 1.5, 2, 2.5].map((v) => (
+          <g>
+            <line class="grid" x1={P3.left} x2={P3.w - P3.right} y1={y3(v)} y2={y3(v)} />
+            <text x={P3.left - 5} y={y3(v) + 4} text-anchor="end">
+              {v.toFixed(1)}
+            </text>
+          </g>
+        ))}
+        <path class="limit" d={limit} />
+        <path class="curve w2" d={coordLine} />
+        <path class="curve w4" d={specLine} />
+        {act3.map((a) => (
+          <g>
+            <circle
+              class:list={[outside(a.coord_ratio) ? "out" : "dot"]}
+              cx={round(x3(a.r))}
+              cy={round(y3(a.coord_ratio))}
+              r="3.2"
+            />
+            <path
+              class:list={[outside(a.spectral_ratio) ? "out" : "dot"]}
+              d={marker("square", x3(a.r), y3(a.spectral_ratio), 3.4)}
+            />
+          </g>
+        ))}
+        <text x={x3(lastAct3.r) + 10} y={y3(lastAct3.spectral_ratio) + 4}>
+          operator norm
+        </text>
+        <text x={x3(lastAct3.r) + 10} y={y3(lastAct3.coord_ratio) + 4}>
+          activation RMS
+        </text>
+        <text x={x3(16) + 10} y={y3((1 + Math.sqrt(16)) / 2) - 12} class="label-faint">
+          (1 + √r)/2
+        </text>
+        <line
+          class="axis"
+          x1={P3.left}
+          x2={P3.w - P3.right}
+          y1={P3.h - P3.bottom}
+          y2={P3.h - P3.bottom}
+        />
+        {act3.map((a) => (
+          <text x={x3(a.r)} y={P3.h - P3.bottom + 14} text-anchor="middle">
+            {a.r}
+          </text>
+        ))}
+        <text
+          x={(P3.left + P3.w - P3.right) / 2}
+          y={P3.h - 4}
+          text-anchor="middle"
+          class="label-faint"
+        >
+          copies of one key and value block, r
+        </text>
+      </svg>
+      <figcaption id="fig3-caption">
+        Figure 3. One key and value block copied r times, as ratios to r = 1. Computed from random
+        matrices; nothing is trained. The dashed line is the random-matrix limit.
+      </figcaption>
+    </figure>
+  )
+}

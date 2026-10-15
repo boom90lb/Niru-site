@@ -1,0 +1,64 @@
+---
+/**
+ * Where the build stands: the tests that come next, in order, then each line
+ * of `capabilities.json`, checked against AMLO's source, folded away.
+ */
+import capabilities from "../data/capabilities.json";
+import { smart } from "../lib/typography.ts";
+
+const ORDER = ["Built", "Partial", "Not built"] as const;
+const lines = [...capabilities].sort(
+  (a, b) =>
+    ORDER.indexOf(a.status as (typeof ORDER)[number]) -
+    ORDER.indexOf(b.status as (typeof ORDER)[number]),
+);
+const statusClass = (status: string) => `ledger-status--${status.toLowerCase().replace(" ", "-")}`;
+
+const next = [
+  {
+    name: "Trained candidates",
+    text: "Can one candidate comparison complete under a declared compute-accounting method, with exact recovery from a checkpoint?",
+  },
+  {
+    name: "One credible comparison",
+    text: "Does one search run end to end, from a frozen selection to a sealed confirmation?",
+  },
+  {
+    name: "Proxy validity",
+    text: "Do results at small scale predict results at the target scale?",
+  },
+  {
+    name: "Policy value",
+    text: "Does a search policy find better designs than a fixed baseline, for the same compute? This is a separate study.",
+  },
+];
+---
+
+<h3 class="next">The next tests, in order</h3>
+<ol>
+  {
+    next.map((step) => (
+      <li>
+        <strong>{step.name}.</strong> {step.text}
+      </li>
+    ))
+  }
+</ol>
+<details class="ledger-details">
+  <summary
+    >The full ledger, reviewed 10 October 2026, with training and accounting refreshed 14 October</summary
+  >
+  <ul class="ledger">
+    {
+      lines.map((line) => (
+        <li>
+          <span class="ledger-name">
+            <span>{line.name}</span>
+            <span class:list={["ledger-status", statusClass(line.status)]}>{line.status}</span>
+          </span>
+          <p>{smart(line.summary)}</p>
+        </li>
+      ))
+    }
+  </ul>
+</details>

@@ -1,0 +1,1796 @@
+/*
+ * One column of text on paper. Size, weight and space carry the hierarchy;
+ * one ink color marks links and the woodcut mark. Mono appears only in the
+ * claim record. Dark mode follows the reader's system setting.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --paper: #f7f5ef;
+  --paper-2: #efebe2;
+  --ink: #1c1b18;
+  --ink-2: #47443d;
+  --ink-3: #69655c;
+  --rule: #d8d3c8;
+  --accent: #7a561c;
+  --ink-indigo: #2f4a6b;
+  --ink-cinnabar: #a23b2a;
+  --ink-verdigris: #3d6656;
+  --ink-faint: #8b867b;
+
+  --font-serif: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
+  --font-mono: "Source Code Pro Variable", "Source Code Pro", Consolas, monospace;
+
+  --measure: 38rem;
+  --wide: 46rem;
+  --gutter: 1.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #131210;
+    --paper-2: #211f1b;
+    --ink: #ebe7de;
+    --ink-2: #c3beb2;
+    --ink-3: #9a958a;
+    --rule: #34312b;
+    --accent: #d8b06a;
+    --ink-indigo: #8fa8c8;
+    --ink-cinnabar: #d98b74;
+    --ink-verdigris: #8fbfa9;
+    --ink-faint: #6f6a60;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  text-rendering: optimizeLegibility;
+}
+
+@media (min-width: 40rem) {
+  body {
+    font-size: 1.125rem;
+  }
+}
+
+.page {
+  width: 100%;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+main {
+  display: block;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Header and footer */
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 1rem;
+  padding: 1.25rem 0 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+}
+
+.mark {
+  display: block;
+  width: 4.75rem;
+  height: auto;
+}
+
+.mark-ink {
+  fill: var(--accent);
+}
+
+.mark-cut {
+  fill: var(--paper);
+}
+
+.site-nav {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0 -0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav li + li {
+  margin-top: 0;
+}
+
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  color: var(--ink-2);
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+  margin-top: 6rem;
+  padding: 1rem 0 2rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.25rem;
+  margin-left: -0.5rem;
+}
+
+.site-footer nav a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  color: var(--ink-3);
+}
+
+.site-footer nav a:hover {
+  color: var(--ink);
+}
+
+/* A block wider than the text column, centred on it */
+
+.breakout {
+  --breakout: min(var(--wide), 100vw - 2 * var(--gutter));
+  width: var(--breakout);
+  max-width: none;
+  margin-left: calc((100% - var(--breakout)) / 2);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Text */
+
+.column {
+  margin-inline: auto;
+  max-width: var(--measure);
+}
+
+h1,
+h2,
+h3 {
+  font-variant-numeric: lining-nums proportional-nums;
+  text-wrap: balance;
+}
+
+h1 {
+  /* A long headline balances badly around its unbreakable words; pretty only avoids a short last line. */
+  text-wrap: pretty;
+  margin: 4.5rem 0 1.5rem;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.375rem);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+}
+
+h2 {
+  margin: 4.5rem 0 1rem;
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+
+h3 {
+  margin: 2.25rem 0 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+p,
+ul,
+ol,
+dl,
+blockquote {
+  margin: 0 0 1.1rem;
+}
+
+ul,
+ol {
+  padding-left: 1.25rem;
+}
+
+li + li {
+  margin-top: 0.45rem;
+}
+
+/* The opening: a headline whose full stop is one GPU-hour, the red square of the descent, set in
+   last like a printer's seal. */
+.hero-title {
+  margin: 4rem 0 1.75rem;
+  font-size: clamp(2.75rem, 1.4rem + 5.6vw, 5.25rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.hour-mark {
+  display: inline-block;
+  width: 0.15em;
+  height: 0.15em;
+  margin-left: 0.05em;
+  background: var(--ink-cinnabar);
+  animation: hour-stamp 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.7s both;
+}
+
+@keyframes hour-stamp {
+  from {
+    opacity: 0;
+    transform: scale(3) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hour-mark {
+    animation: none;
+  }
+}
+
+.lede {
+  color: var(--ink-2);
+  font-size: 1.125em;
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.75rem;
+}
+
+.note {
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+strong {
+  font-weight: 600;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+hr {
+  height: 1px;
+  margin: 3rem 0;
+  border: 0;
+  background: var(--rule);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  padding: 0.6rem 0.9rem;
+  background: var(--ink);
+  color: var(--paper);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The one call to action, and links set as actions */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+/* Ordered steps and definition lists */
+
+.steps {
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  position: relative;
+  padding-left: 2rem;
+  counter-increment: step;
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--ink-3);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.steps li + li {
+  margin-top: 0.7rem;
+}
+
+.defs,
+.tiers {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.6rem 1.25rem;
+  margin: 1.5rem 0;
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.defs dt,
+.tiers dt {
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+}
+
+.defs dd,
+.tiers dd {
+  margin: 0;
+}
+
+.defs dd span,
+.tiers dd span {
+  display: block;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+/* Figures */
+
+figure {
+  margin: 2rem 0;
+}
+
+figcaption {
+  margin-top: 0.75rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.plot {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--font-serif);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.plot text {
+  fill: var(--ink-2);
+  font-size: 13px;
+}
+
+.plot .label-strong {
+  fill: var(--ink);
+  font-weight: 600;
+}
+
+.plot .label-faint {
+  fill: var(--ink-3);
+}
+
+.plot .axis,
+.plot .tick {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+
+.plot .grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.plot .reference {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.plot .band {
+  fill: var(--paper-2);
+}
+
+.plot .band-edge {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.plot .interval {
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.plot .interval--accent {
+  stroke: var(--accent);
+}
+
+.plot .interval--faint {
+  stroke: var(--ink-3);
+}
+
+.plot .dot {
+  fill: var(--ink);
+}
+
+.plot .dot--accent {
+  fill: var(--accent);
+}
+
+.plot .dot--faint {
+  fill: var(--ink-3);
+}
+
+.plot .dot--hollow {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.plot .curve {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.plot .limit {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.plot .w0 {
+  stroke: color-mix(in srgb, var(--ink) 28%, var(--paper));
+}
+.plot .w1 {
+  stroke: color-mix(in srgb, var(--ink) 45%, var(--paper));
+}
+.plot .w2 {
+  stroke: color-mix(in srgb, var(--ink) 62%, var(--paper));
+}
+.plot .w3 {
+  stroke: color-mix(in srgb, var(--ink) 80%, var(--paper));
+}
+.plot .w4 {
+  stroke: var(--ink);
+}
+.plot .m0 {
+  fill: color-mix(in srgb, var(--ink) 28%, var(--paper));
+}
+.plot .m1 {
+  fill: color-mix(in srgb, var(--ink) 45%, var(--paper));
+}
+.plot .m2 {
+  fill: color-mix(in srgb, var(--ink) 62%, var(--paper));
+}
+.plot .m3 {
+  fill: color-mix(in srgb, var(--ink) 80%, var(--paper));
+}
+.plot .m4 {
+  fill: var(--ink);
+}
+
+.plot .tuned {
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+.plot .out {
+  fill: var(--accent);
+}
+
+.plot .out-label {
+  fill: var(--accent);
+}
+
+.figure-row {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 46rem) {
+  .figure-row--3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+.figure-row h3,
+.figure-panel-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* The claim record, set in type */
+
+.record {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.25rem 1.1rem;
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.record-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.record-head span:last-child {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+.record h3 {
+  margin: 1.1rem 0 0.4rem;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.record h3:first-of-type {
+  margin-top: 0;
+}
+
+.record dl {
+  display: grid;
+  grid-template-columns: 9.5em 1fr;
+  gap: 0.2rem 1rem;
+  margin: 0;
+}
+
+.record dt {
+  color: var(--ink-3);
+}
+
+.record dd {
+  margin: 0;
+}
+
+.record .verdict {
+  font-weight: 600;
+}
+
+.record-foot {
+  margin: 1rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-3);
+}
+
+@media (max-width: 30rem) {
+  .record dl {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .record dd {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* The status ledger */
+
+.ledger {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ledger li {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.ledger li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.ledger-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 1rem;
+  font-weight: 600;
+}
+
+.ledger-status {
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+}
+
+.ledger-status--built {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.ledger p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.next {
+  margin-top: 1.5rem;
+}
+
+.ledger-details {
+  margin-top: 1.5rem;
+}
+
+.ledger-details summary {
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.ledger-details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+/* The descent: one large run, divided by ten down to one GPU-hour */
+
+.descent {
+  display: grid;
+  grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
+  gap: 1.25rem 2.25rem;
+  align-items: start;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.descent-plate {
+  margin: 0;
+}
+
+.descent-svg {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  background: var(--paper);
+}
+
+.descent-svg rect {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.25;
+}
+
+.descent-svg text {
+  fill: var(--ink-2);
+  font-family: inherit;
+  font-variant-numeric: lining-nums tabular-nums;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/* A square's label shows only while the square is large enough to read it. */
+.descent-svg .is-shown text {
+  opacity: 1;
+}
+
+.descent-svg .descent-model {
+  fill: var(--ink-3);
+  font-size: 0.8em;
+}
+
+.descent-svg rect {
+  transition: stroke-opacity 0.3s ease;
+}
+
+/* An outline a few pixels wide only clots the corner; the red pixel stays clear of it. */
+.descent-svg .is-tiny rect {
+  stroke-opacity: 0;
+}
+
+/* One hour. Without the script, a one-pixel outline keeps it visible; with it, the script sizes it
+   to the larger of its true size and one pixel. */
+.descent-step--hour rect {
+  fill: var(--ink-cinnabar);
+  stroke: var(--ink-cinnabar);
+  stroke-width: 1;
+}
+
+.descent.is-live .descent-step--hour rect {
+  stroke: none;
+  shape-rendering: crispEdges;
+}
+
+.descent-svg .descent-step--hour text,
+.descent-svg .descent-step--hour .descent-model {
+  fill: var(--paper);
+  font-weight: 600;
+}
+
+.descent-hint {
+  transition: opacity 0.4s ease;
+}
+
+.descent.is-playing .descent-hint {
+  opacity: 0;
+}
+
+.descent-side {
+  align-self: center;
+}
+
+.descent-readout p {
+  margin: 0;
+}
+
+.descent-hours {
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+.descent-hours em {
+  font-style: normal;
+}
+
+.descent-hours span {
+  display: block;
+  color: var(--ink);
+  font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.descent-trains {
+  margin-top: 0.75rem;
+  font-size: 1.0625rem;
+}
+
+.descent-chip {
+  margin-top: 0.25rem;
+  color: var(--ink-2);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.descent-hint {
+  margin: 1.25rem 0 0;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.descent-play {
+  min-height: 44px;
+  margin-top: 0.25rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.descent-table {
+  grid-column: 1 / -1;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.descent-model-inline {
+  display: none;
+}
+
+.descent-table th,
+.descent-table td {
+  border-bottom: 0;
+  text-align: left;
+  white-space: normal;
+}
+
+.descent-table th {
+  padding: 0 0 0.5rem;
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+.descent-table th:first-child,
+.descent-table td:first-child {
+  padding-right: 1rem;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.descent-table th:nth-child(2),
+.descent-table td:nth-child(2) {
+  padding-right: 1rem;
+  white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.descent-table td {
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--rule);
+  vertical-align: top;
+  transition: color 0.3s ease;
+}
+
+.descent-table .descent-hour td {
+  color: var(--ink-cinnabar);
+  font-weight: 600;
+}
+
+.descent.is-playing .descent-table td {
+  color: var(--ink-3);
+}
+
+.descent .descent-table .is-current td {
+  color: var(--ink);
+}
+
+.descent .descent-table .descent-hour.is-current td {
+  color: var(--ink-cinnabar);
+}
+
+.descent figcaption {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+@media (max-width: 44rem) {
+  .descent {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .descent-plate {
+    max-width: 24rem;
+  }
+
+  .descent-side {
+    align-self: start;
+  }
+
+  /* Two columns on a narrow screen: the model folds under its hours. */
+  .descent-table th:nth-child(2),
+  .descent-table td:nth-child(2) {
+    display: none;
+  }
+
+  .descent-model-inline {
+    display: block;
+    color: var(--ink-3);
+  }
+}
+
+/* Lists of documents */
+
+.doc-list {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-list li {
+  margin: 0;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.doc-list li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.doc-list a {
+  display: block;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.doc-list a:hover .doc-title {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.doc-title {
+  display: block;
+  font-weight: 600;
+}
+
+.doc-meta {
+  display: block;
+  color: var(--ink-3);
+  font-size: 0.875rem;
+}
+
+.doc-summary {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+/* Documents: notes, About, Privacy */
+
+.doc-head {
+  margin-bottom: 2.5rem;
+}
+
+.doc-head h1 {
+  margin-top: 4.5rem;
+  margin-bottom: 1rem;
+}
+
+.doc-kicker {
+  margin: 4.5rem 0 0;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+.doc-kicker + h1 {
+  margin-top: 0.4rem;
+}
+
+.prose h2 {
+  margin-top: 3rem;
+}
+
+.prose h3 {
+  margin-top: 2rem;
+}
+
+.prose blockquote {
+  margin-left: 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--rule);
+  color: var(--ink-2);
+}
+
+.sources {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+.sources h2 {
+  margin-top: 1rem;
+  font-size: 1.0625rem;
+}
+
+.sources ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+/* Math, typeset as MathML at build time */
+
+.tex--display {
+  display: block;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+}
+
+math {
+  font-size: 1.05em;
+}
+
+/* Tables (the spectral study) */
+
+.table-wrap {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+caption {
+  padding-bottom: 0.5rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 0.4rem 0.6rem 0.4rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: right;
+  white-space: nowrap;
+}
+
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+
+thead th {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+td.is-out {
+  color: var(--accent);
+}
+
+/* The request form */
+
+.preview-form {
+  max-width: var(--measure);
+  margin-top: 2rem;
+}
+
+.preview-form h2 {
+  margin-top: 0;
+}
+
+.field {
+  margin-bottom: 1.25rem;
+}
+
+.field label,
+.acknowledgements legend {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
+.field label span {
+  margin-left: 0.4rem;
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+.field-hint {
+  margin: -0.1rem 0 0.4rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--ink-3);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.acknowledgements {
+  margin: 1.75rem 0 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.check-row {
+  display: grid;
+  grid-template-columns: 1.25rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  min-height: 44px;
+  margin-bottom: 0.6rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.check-row input {
+  width: 1.1rem;
+  min-height: 0;
+  height: 1.1rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--accent);
+}
+
+.trap-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.sensitive-warning {
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+/* Message pages (form results, 404) */
+
+.message {
+  max-width: var(--measure);
+}
+
+.message .button {
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .button,
+  a {
+    transition:
+      color 120ms ease,
+      background-color 120ms ease;
+  }
+}
+
+@media print {
+  .site-header nav,
+  .site-footer nav,
+  .skip-link {
+    display: none;
+  }
+}
+
+.plot--small {
+  max-width: 25rem;
+}
+
+.plot--panel {
+  max-width: 20rem;
+}
+
+.plot--panel text {
+  font-size: 11px;
+}
+
+.plot--legend {
+  max-width: 25rem;
+  margin-bottom: 0.75rem;
+}
+
+.plot--legend text {
+  font-size: 12px;
+}
+
+.plot--single {
+  max-width: 30rem;
+}
+
+.spectral-figure {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* The algebra window: a plate of ink drawing set into the page */
+
+.ink-window {
+  --plate: min(78rem, 100vw - 2 * var(--gutter));
+  width: var(--plate);
+  margin: 3rem 0 3.5rem calc((100% - var(--plate)) / 2);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.ink-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+  padding: 0.75rem 0 0;
+}
+
+.ink-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1rem;
+}
+
+.ink-kicker {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+  font-style: italic;
+}
+
+.ink-models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.25rem;
+  font-size: 0.9375rem;
+}
+
+.ink-models[hidden] {
+  display: none;
+}
+
+.ink-models button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.4rem;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ink-models button[aria-pressed="true"] {
+  border-bottom-color: var(--ink);
+  color: var(--ink);
+  cursor: default;
+}
+
+/*
+ * The trail has its own row and keeps to one line at every level, so the header's height never
+ * changes and the stage under it never moves. Where the trail is longer than the plate, it
+ * scrolls sideways and shows its end.
+ */
+.ink-crumbs {
+  flex-basis: 100%;
+  min-width: 0;
+}
+
+.ink-crumbs ol {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0 0.4rem;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+.ink-crumbs li {
+  display: flex;
+  flex: none;
+  align-items: center;
+  min-height: 44px;
+}
+
+.ink-crumbs li + li {
+  margin-top: 0;
+}
+
+/* The separator ends each step, so a wrapped trail never starts a line with one. */
+.ink-crumbs li:not(:last-child)::after {
+  content: "›";
+  margin-left: 0.4rem;
+  color: var(--ink-3);
+}
+
+.ink-crumbs button,
+.ink-open button,
+.ink-figure button,
+.ink-steps button,
+.ink-walls button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.15rem;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.ink-crumbs [aria-current] {
+  color: var(--ink);
+}
+
+/*
+ * Each drawing is designed at the plate's full width and scales as one
+ * picture. Below a minimum width the picture keeps its size, so its smallest
+ * lettering stays near 9.5px, and the stage scrolls sideways instead.
+ */
+.ink-stage {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.ink-surface {
+  position: relative;
+  width: max(100%, 68rem);
+  aspect-ratio: 2 / 1;
+}
+
+.ink-still,
+.ink-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ink-canvas {
+  display: block;
+  touch-action: pan-x pan-y;
+}
+
+.ink-canvas[hidden],
+.ink-still[hidden] {
+  display: none;
+}
+
+.ink-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-serif);
+}
+
+.ink-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ink-halo {
+  fill: none;
+  stroke: var(--paper);
+  stroke-linecap: round;
+}
+
+.ink-paper {
+  fill: var(--paper);
+}
+
+/* A deeper layer prints its inks mixed toward the paper; its paper stays opaque. */
+.ink-fade-80 {
+  --fade: 80%;
+}
+.ink-fade-60 {
+  --fade: 60%;
+}
+.ink-fade-40 {
+  --fade: 40%;
+}
+.ink-fade-24 {
+  --fade: 24%;
+}
+.ink-ink {
+  stroke: color-mix(in srgb, var(--ink) var(--fade, 100%), var(--paper));
+}
+.ink-indigo {
+  stroke: color-mix(in srgb, var(--ink-indigo) var(--fade, 100%), var(--paper));
+}
+.ink-cinnabar {
+  stroke: color-mix(in srgb, var(--ink-cinnabar) var(--fade, 100%), var(--paper));
+}
+.ink-ochre {
+  stroke: color-mix(in srgb, var(--accent) var(--fade, 100%), var(--paper));
+}
+.ink-verdigris {
+  stroke: color-mix(in srgb, var(--ink-verdigris) var(--fade, 100%), var(--paper));
+}
+.ink-faint {
+  stroke: color-mix(in srgb, var(--ink-faint) var(--fade, 100%), var(--paper));
+}
+.ink-fill-ink {
+  fill: color-mix(in srgb, var(--ink) var(--fade, 100%), var(--paper));
+}
+.ink-fill-indigo {
+  fill: color-mix(in srgb, var(--ink-indigo) var(--fade, 100%), var(--paper));
+}
+.ink-fill-cinnabar {
+  fill: color-mix(in srgb, var(--ink-cinnabar) var(--fade, 100%), var(--paper));
+}
+.ink-fill-ochre {
+  fill: color-mix(in srgb, var(--accent) var(--fade, 100%), var(--paper));
+}
+.ink-fill-verdigris {
+  fill: color-mix(in srgb, var(--ink-verdigris) var(--fade, 100%), var(--paper));
+}
+.ink-fill-faint {
+  fill: color-mix(in srgb, var(--ink-faint) var(--fade, 100%), var(--paper));
+}
+
+.ink-foot {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0.5rem 0 1rem;
+}
+
+.ink-caption {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.ink-open {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.75rem;
+  min-height: 44px;
+  margin: 0 0 0.25rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+.ink-open[hidden] {
+  display: none;
+}
+
+/* Emptied by a band the reader hid: the row keeps its place, so the controls under it stay put. */
+.ink-open.ink-open-reserved {
+  visibility: hidden;
+}
+
+.ink-open-buttons {
+  display: contents;
+}
+
+.ink-figure,
+.ink-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.75rem;
+  margin: 0 0 0.25rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+.ink-figure[hidden],
+.ink-steps[hidden],
+.ink-walls[hidden],
+.ink-family[hidden] {
+  display: none;
+}
+
+.ink-figure-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* C's bands and its residual policy: toggles, pressed when the band shows or the policy holds. */
+.ink-walls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1.5rem;
+  margin: 0 0 0.25rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+.ink-walls-bands,
+.ink-walls-policy {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.6rem;
+}
+
+.ink-walls button[aria-pressed="true"] {
+  color: var(--ink);
+  text-decoration-style: double;
+}
+
+.ink-walls button[aria-pressed="false"] {
+  text-decoration-style: dotted;
+}
+
+/* The family's sliders: each control's name, its range and its value. */
+.ink-family {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+  gap: 0.25rem 1.5rem;
+  margin: 0 0 0.5rem;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+.ink-family label {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr 4.2rem;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+}
+
+.ink-family input {
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.ink-family output {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* D's counts as page text, on a stage that scrolls sideways and may hide the lanes. */
+.ink-counts {
+  display: none;
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.ink-narrow .ink-counts:not([hidden]) {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.ink-counts div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.5rem;
+}
+
+.ink-counts dt {
+  color: var(--ink-3);
+}
+
+.ink-counts dd {
+  margin: 0;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.ink-counts .ink-exact {
+  color: var(--ink-3);
+  font-size: 0.875rem;
+}
+
+/* The film's rail: a segment per chapter, filled as it plays; with details on, a mark where it stops. */
+.ink-rail {
+  display: flex;
+  flex-basis: 100%;
+  gap: 3px;
+  height: 3px;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.ink-rail span {
+  position: relative;
+  min-width: 3px;
+  background: linear-gradient(to right, var(--ink-3) calc(var(--fill, 0) * 100%), var(--rule) 0);
+}
+
+.ink-rail-stops span::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 1px;
+  height: 9px;
+  background: var(--ink-3);
+}
+
+/* A film's sentence as page text, on a stage too narrow to show where the drawing sets it. */
+.ink-say {
+  display: none;
+}
+
+.ink-narrow .ink-say:not([hidden]) {
+  display: block;
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.0625rem;
+}
+
+.ink-steps-sep {
+  width: 1px;
+  height: 1.1em;
+  background: var(--rule);
+}
+
+.ink-steps button[hidden] {
+  display: none;
+}
+
+.ink-steps button:disabled {
+  color: var(--ink-3);
+  text-decoration: none;
+  cursor: default;
+}
+
+.ink-step-count {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.ink-step-hint {
+  font-style: italic;
+}
+
+/* A touch screen has no arrow keys or Space to offer. */
+@media (pointer: coarse) {
+  .ink-step-hint {
+    display: none;
+  }
+}
+
+.ink-note {
+  margin: 0.25rem 0 0;
+  color: var(--ink-3);
+  font-size: 0.875rem;
+}
+
+/* Keep the site navigation readable at the smallest supported width. */
+@media (max-width: 420px) {
+  .site-header {
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .site-nav {
+    gap: 0;
+    margin-right: -0.35rem;
+  }
+  .site-nav a {
+    font-size: 0.8125rem;
+    padding-inline: 0.35rem;
+  }
+  .brand {
+    font-size: 0.875rem;
+    gap: 0.35rem;
+  }
+  .mark {
+    width: 2.4rem;
+  }
+}

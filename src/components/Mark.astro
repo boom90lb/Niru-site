@@ -1,0 +1,21 @@
+---
+/**
+ * The woodcut arrow, inline so its ink takes the page's ink color in light
+ * and dark mode. The cut layer is carved back out in the paper color.
+ */
+import { cutMark } from "../lib/brand";
+
+const mark = cutMark({ weight: 1.6, spacing: 1.4 });
+---
+
+<svg
+  class="mark"
+  viewBox={mark.viewBox}
+  width={mark.width}
+  height={mark.height}
+  aria-hidden="true"
+  focusable="false"
+>
+  <path class="mark-ink" d={mark.ink}></path>
+  <path class="mark-cut" d={mark.cut}></path>
+</svg>

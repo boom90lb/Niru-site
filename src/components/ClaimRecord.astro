@@ -1,0 +1,177 @@
+---
+/**
+ * A claim record, set in type. Every value comes from the simulated trace
+ * (`src/data/traces/simulated.json`), so the record cannot drift from the run
+ * it describes. The declaration lines are the comparison's fixed design and
+ * are not in the trace.
+ */
+import traceJson from "../data/traces/simulated.json";
+import type { SearchTrace, TraceEvent } from "../lib/trace/schema.ts";
+
+const trace = traceJson as unknown as SearchTrace;
+type Of<T extends TraceEvent["event_type"]> = Extract<TraceEvent, { event_type: T }>;
+const one = <T extends TraceEvent["event_type"]>(type: T): Of<T> => {
+  const event = trace.events.find((e): e is Of<T> => e.event_type === type);
+  if (!event) throw new Error(`trace has no ${type} event`);
+  return event;
+};
+
+const frozen = one("selection.frozen").payload;
+const planned = one("target.planned").payload;
+const confirmation = one("confirmation.decided").payload;
+const claim = one("claim.recorded").payload;
+const verified = one("claim.verified").payload;
+const runs = trace.events.filter(
+  (e): e is Of<"target.evaluated"> => e.event_type === "target.evaluated",
+);
+const chosenRun = runs.find((r) => r.payload.role === "champion");
+const referenceRun = runs.find((r) => r.payload.role === "reference");
+if (!chosenRun || !referenceRun) throw new Error("trace lacks the full-scale runs");
+const sizeOf = (run: Of<"target.evaluated">) => {
+  const arch = trace.architectures[run.candidate_arch_hash];
+  if (!arch) throw new Error("a full-scale run names an unknown architecture");
+  return arch.params;
+};
+
+const grouped = (n: number) => n.toLocaleString("en-US");
+const signed = (v: number) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(3)}`;
+const scaled = (n: number) => {
+  const [v, unit] = n >= 1e9 ? [n / 1e9, "billion"] : [n / 1e6, "million"];
+  return `${v.toFixed(v >= 100 ? 0 : 1)} ${unit}`;
+};
+const percent = (v: number) => `${(v * 100).toFixed(0)}%`;
+const small = (v: number) => `${(v * 100).toPrecision(2)}%`;
+const exponent = (n: number) => {
+  const e = Math.floor(Math.log10(n));
+  const m = n / 10 ** e;
+  const sup = String(e).replace(/\d/g, (d) => "⁰¹²³⁴⁵⁶⁷⁸⁹"[Number(d)]!);
+  return `${m === 1 ? "" : `${m} × `}10${sup}`;
+};
+const list = (items: string[]) =>
+  items.length > 1 ? `${items.slice(0, -1).join(", ")} or ${items.at(-1)}` : (items[0] ?? "");
+
+const axis = (name: string) => planned.axes.find((a) => a.axis === name);
+const width = axis("width");
+const depth = axis("depth");
+const tokens = axis("tokens");
+const maxReceipt = Math.max(
+  ...runs.map((r) => Math.abs(r.payload.receipt.relative_compute_error)),
+);
+const receiptBound = Math.ceil(maxReceipt * 1000) / 10;
+const outcome = confirmation.status.toUpperCase();
+const passed = verified.checks.filter((c) => c.passed).length;
+const changes = claim.revoked_by.filter((r) => r.startsWith("change to "));
+const others = claim.revoked_by.filter((r) => !r.startsWith("change to "));
+const revokedBy = [
+  ...(changes.length > 0
+    ? [
+        `a change to ${list(changes.map((c) => c.replace(/^change to (an? |the )?/, (_match, article) => article ?? "")))}`,
+      ]
+    : []),
+  ...others,
+].join("; ");
+const source =
+  trace.source.kind === "simulated" ? `simulated run · seed ${trace.source.seed}` : "AMLO run";
+const estimand = frozen.analysis.estimand.replace(/, at the target configuration$/, "");
+---
+
+<figure class="record breakout" aria-labelledby="record-title">
+  <p class="record-head" id="record-title">
+    <span>CLAIM RECORD</span>
+    <span>{source}</span>
+  </p>
+
+  <h3>Declared before the run</h3>
+  <dl>
+    <dt>kind</dt>
+    <dd>frozen-recipe comparison of architectures</dd>
+    <dt>varied</dt>
+    <dd>the architecture</dd>
+    <dt>held fixed</dt>
+    <dd>the training recipe; in each tier, the compute target, seed and example order</dd>
+    <dt>resources</dt>
+    <dd>training FLOPs, from separate accounts for search, replication, audit and confirmation</dd>
+    <dt>estimand</dt>
+    <dd>{estimand}</dd>
+    <dt>analysis</dt>
+    <dd>
+      paired BCa bootstrap, {percent(frozen.analysis.confidence_level)} interval; support needs
+      {" "}{(frozen.analysis.required_confidence * 100).toFixed(1)}% confidence, shown by an exact
+      bound on the bootstrap tail at {percent(confirmation.monte_carlo_error)} Monte Carlo error
+    </dd>
+  </dl>
+
+  <h3>Frozen before the seal opened</h3>
+  <dl>
+    <dt>policy</dt>
+    <dd>{frozen.policy}, state {frozen.state_hash}</dd>
+    <dt>chosen</dt>
+    <dd>design {frozen.champion}</dd>
+    <dt>reference</dt>
+    <dd>design {frozen.reference}, the current best when the search began</dd>
+    <dt>sealed set</dt>
+    <dd>
+      {frozen.analysis.n_examples} examples, commitment {frozen.analysis.sealed_set}, held by the
+      Auditor
+    </dd>
+  </dl>
+
+  <h3>Measured at full size</h3>
+  <dl>
+    <dt>scale step</dt>
+    <dd>
+      width {grouped(width!.from)} → {grouped(width!.to)}, depth {depth!.from} → {depth!.to},
+      {" "}{scaled(tokens!.to)} tokens; the search measured {
+        planned.tested.map((t) => scaled(t.params)).join(" and ")
+      } parameters, and this size was {planned.evidence}
+    </dd>
+    <dt>compute</dt>
+    <dd>
+      {exponent(claim.scope.compute_flops)} FLOPs for each design; receipts within {receiptBound}%
+      of the target
+    </dd>
+    <dt>steps</dt>
+    <dd>
+      chosen {grouped(chosenRun.payload.compute_budget_plan.steps)}, reference {
+        grouped(referenceRun.payload.compute_budget_plan.steps)
+      }
+    </dd>
+    <dt>result</dt>
+    <dd>
+      Δ = {signed(confirmation.observed_diff)} nats per token, interval {
+        signed(confirmation.ci_lower)
+      } to {signed(confirmation.ci_upper)}
+    </dd>
+    <dt>tail</dt>
+    <dd>
+      {grouped(confirmation.tail_count)} of {grouped(confirmation.n_resamples)} resamples at or below
+      zero; exact bound {small(confirmation.tail_upper_bound)}, against the {
+        small(1 - confirmation.required_confidence)
+      } allowed
+    </dd>
+    <dt>outcome</dt>
+    <dd>
+      <span class="verdict">{outcome}</span> · <span class="verdict">simulated outcome</span>
+    </dd>
+  </dl>
+
+  <h3>Scope</h3>
+  <dl>
+    <dt>covers</dt>
+    <dd>
+      this trained pair, the chosen design at {scaled(sizeOf(chosenRun))} parameters and the reference
+      at {scaled(sizeOf(referenceRun))}, matched in compute and not in size, on these {
+        confirmation.n_examples
+      }
+      {" "}sealed examples
+    </dd>
+    <dt>revoked by</dt>
+    <dd>{revokedBy}</dd>
+  </dl>
+
+  <p class="record-foot">
+    Replay passes {passed} of {verified.checks.length} checks. The site reruns the record’s arithmetic,
+    and finds that
+    {" "}{verified.checks.map((c) => c.check).join("; ")}.
+  </p>
+</figure>

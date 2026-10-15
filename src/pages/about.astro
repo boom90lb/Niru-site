@@ -1,0 +1,83 @@
+---
+import { getEntry, render } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const page = await getEntry("pages", "about");
+if (!page) throw new Error("Missing about content entry");
+const { Content } = await render(page);
+const { title, description, headline, lede, boundary } = page.data;
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/about/" currentPath="/about/">
+  <article class="column">
+    <header class="doc-head">
+      <h1>{headline}</h1>
+      <p class="lede">{lede}</p>
+    </header>
+    <div class="prose"><Content /></div>
+    {boundary && <p class="note">{boundary}</p>}
+
+    <section class="sources" aria-labelledby="sources-title">
+      <h2 id="sources-title">Sources</h2>
+      <h3>For the bet</h3>
+      <ul>
+        <li>
+          Daniel A. Roberts, Sho Yaida and Boris Hanin, <cite
+            >The Principles of Deep Learning Theory</cite
+          >, Cambridge University Press.
+        </li>
+        <li>
+          Greg Yang et al., <cite
+            >Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer</cite
+          >, <a href="https://arxiv.org/abs/2203.03466">arXiv:2203.03466</a>.
+        </li>
+      </ul>
+      <h3>For the history</h3>
+      <ul>
+        <li>
+          Mark Edward Lewis, <cite>China's Cosmopolitan Empire: The Tang Dynasty</cite>, Harvard
+          University Press.
+        </li>
+        <li>Wallace Johnson, <cite>The T'ang Code</cite>, Princeton University Press.</li>
+        <li>
+          William T. Rowe, <cite>China's Last Empire: The Great Qing</cite>, Harvard University
+          Press.
+        </li>
+        <li>Jonathan D. Spence, <cite>The Search for Modern China</cite>, W. W. Norton.</li>
+        <li>
+          Frances Wood and Mark Barnard, <cite
+            >The Diamond Sutra: The Story of the World's Earliest Dated Printed Book</cite
+          >, British Library.
+        </li>
+        <li>Diarmaid MacCulloch, <cite>A History of Christianity</cite>, Penguin.</li>
+        <li>
+          Marie Therese Flanagan, <cite
+            >Irish Society, Anglo-Norman Settlers, Angevin Kingship</cite
+          >, Oxford University Press.
+        </li>
+      </ul>
+      <h3>For the name</h3>
+      <ul>
+        <li>
+          Jerry Norman, <cite>A Comprehensive Manchu-English Dictionary</cite>, p. 287b,{" "}
+          <a href="https://doi.org/10.1163/9781684170692">DOI 10.1163/9781684170692</a>.
+        </li>
+        <li>
+          Mark C. Elliott, <cite>The Manchu Way</cite>,{" "}
+          <a href="https://www.sup.org/books/title?id=709">Stanford University Press</a>.
+        </li>
+        <li>
+          Mandarin Mansion, <cite>Glossary: niru</cite>,{" "}
+          <a href="https://www.mandarinmansion.com/glossary/niru">mandarinmansion.com</a>.
+        </li>
+      </ul>
+      <h3>Elsewhere</h3>
+      <ul>
+        <li>
+          Brendon Reperttang, <a href="https://boom90lb.github.io/" rel="me">boom90lb.github.io</a
+          >.
+        </li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>

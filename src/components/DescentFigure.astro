@@ -1,0 +1,319 @@
+---
+/**
+ * The descent: one large training run, divided by ten until one GPU-hour is
+ * left. Each square holds a tenth of the area of the one before, centred in
+ * it, so the last, one hour, sits at the middle of the first at its true
+ * scale; below one pixel it is drawn at one pixel, so it never vanishes. Beside each step: the model
+ * those hours train and how long one chip would take. The page reads without
+ * JavaScript: the still shows the first squares and the red pixel, and the
+ * table gives every step. The script keeps the hour a crisp pixel, and,
+ * unless the reader asks for reduced motion, zooms down to the hour once,
+ * when the figure is first in view, and back up to the whole run.
+ */
+const RUN_HOURS = 30_840_000; // Llama 3.1 405B, Meta's model card
+const RUN_OPS = 3.8e25; // the Llama 3 paper
+const OPS_PER_HOUR = RUN_OPS / RUN_HOURS;
+// Compute-optimal size for a budget: 6·N·D operations with D ≈ 20·N tokens.
+const params = (hours: number) => Math.sqrt((hours * OPS_PER_HOUR) / 120);
+const size = (n: number) =>
+  n >= 1e9 ? `${+(n / 1e9).toPrecision(2)}B` : `${+(n / 1e6).toPrecision(2)}M`;
+
+const steps: Array<{ hours: number; label: string; model: string; chip: string }> = [
+  {
+    hours: RUN_HOURS,
+    label: "30,840,000",
+    model: "405B, Llama 3.1",
+    chip: "about 3,500 years, back to the Late Bronze Age, around 1500 BC",
+  },
+  {
+    hours: RUN_HOURS / 10,
+    label: "3,084,000",
+    model: "",
+    chip: "about 350 years, back to 1674, when Leeuwenhoek first described microbes in lake water",
+  },
+  {
+    hours: RUN_HOURS / 100,
+    label: "308,400",
+    model: "",
+    chip: "about 35 years, back to 1991, when the web went public",
+  },
+  { hours: RUN_HOURS / 1e3, label: "30,840", model: "", chip: "about three and a half years" },
+  { hours: RUN_HOURS / 1e4, label: "3,084", model: "", chip: "about four months" },
+  { hours: RUN_HOURS / 1e5, label: "308", model: "", chip: "about thirteen days" },
+  { hours: RUN_HOURS / 1e6, label: "31", model: "", chip: "about a day and a quarter" },
+  { hours: RUN_HOURS / 1e7, label: "3", model: "", chip: "about three hours" },
+  { hours: 1, label: "1", model: "", chip: "one hour" },
+].map((s) => ({ ...s, model: s.model || size(params(s.hours)) }));
+
+const S = 1000;
+const squares = steps.map((step) => {
+  const side = S * Math.sqrt(step.hours / RUN_HOURS);
+  return { ...step, x: (S - side) / 2, y: (S - side) / 2, side };
+});
+const pad = (s: number) => 0.07 * s;
+const views = squares.map((q): [number, number, number] => [
+  q.x - pad(q.side),
+  q.y - pad(q.side),
+  q.side + 2 * pad(q.side),
+]);
+const [vx, vy, vw] = views[0]!;
+const hour = squares.length - 1;
+// The still, at a typical drawn width: squares under a few pixels lose their outline, so the
+// corner does not clot around the red pixel, and only labels large enough to read are shown.
+const STILL_PX = 330;
+const px = (side: number) => (side * STILL_PX) / vw;
+const fmt = (n: number) => +n.toPrecision(8);
+const readTrains = (i: number) =>
+  i === 0 ? "Llama 3.1 405B" : `trains a model of ${squares[i]!.model} parameters`;
+---
+
+<figure
+  class="descent breakout"
+  data-descent
+  data-views={JSON.stringify(views.map((v) => v.map(fmt)))}
+>
+  <div class="descent-plate">
+    <svg
+      class="descent-svg"
+      viewBox={`${fmt(vx)} ${fmt(vy)} ${fmt(vw)} ${fmt(vw)}`}
+      role="img"
+      aria-labelledby="descent-title"
+    >
+      <title id="descent-title">
+        One large training run drawn as a square, with a tenth of its area nested inside it, and a
+        tenth of that inside again, down to one GPU-hour, a red pixel
+      </title>
+      {
+        squares.map((q, i) => (
+          <g
+            class:list={[
+              "descent-step",
+              i === hour && "descent-step--hour",
+              i !== hour && px(q.side) >= 170 && "is-shown",
+              i !== hour && px(q.side) < 8 && "is-tiny",
+            ]}
+            data-side={fmt(q.side)}
+            data-cx={fmt(q.x + q.side / 2)}
+            data-cy={fmt(q.y + q.side / 2)}
+          >
+            <rect
+              x={fmt(q.x)}
+              y={fmt(q.y)}
+              width={fmt(q.side)}
+              height={fmt(q.side)}
+              vector-effect="non-scaling-stroke"
+            />
+            <text
+              x={fmt(q.x + (i === hour ? 0.5 : 0.06) * q.side)}
+              y={fmt(q.y + (i === hour ? 0.48 : 0.13) * q.side)}
+              font-size={fmt((i === hour ? 0.12 : 0.056) * q.side)}
+              text-anchor={i === hour ? "middle" : "start"}
+            >
+              <tspan>{i === hour ? "one GPU-hour" : `${q.label} GPU-hours`}</tspan>
+              <tspan
+                class="descent-model"
+                x={fmt(q.x + (i === hour ? 0.5 : 0.06) * q.side)}
+                dy="1.3em"
+              >
+                {i === 0 ? "Llama 3.1 405B" : `a ${q.model} model`}
+              </tspan>
+            </text>
+          </g>
+        ))
+      }
+    </svg>
+  </div>
+  <div class="descent-side">
+    <div class="descent-readout" aria-hidden="true">
+      <p class="descent-hours"><span>{squares[0]!.label}</span> <em>GPU-hours</em></p>
+      <p class="descent-trains">{readTrains(0)}</p>
+      <p class="descent-chip">On one chip, {squares[0]!.chip}</p>
+    </div>
+    <p class="descent-hint">
+      The red pixel at the centre is one GPU-hour. At true scale it is smaller than a pixel, so it
+      is drawn at one.
+    </p>
+    <button type="button" class="descent-play" hidden>Play again</button>
+  </div>
+  <table class="descent-table">
+    <thead>
+      <tr>
+        <th scope="col">GPU-hours</th>
+        <th scope="col">Trains</th>
+        <th scope="col">On one chip, finishing today</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        squares.map((q, i) => (
+          <tr
+            class:list={[i === hour && "descent-hour"]}
+            data-hours={q.label}
+            data-unit={i === hour ? "GPU-hour" : "GPU-hours"}
+            data-trains={readTrains(i)}
+            data-chip={q.chip}
+          >
+            <td>
+              {q.label}
+              <span class="descent-model-inline">{q.model}</span>
+            </td>
+            <td>{q.model}</td>
+            <td>{q.chip}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <figcaption>
+    Meta trained Llama 3.1 405B on 15.6 trillion tokens with 3.8 × 10<sup>25</sup> operations (<a
+      href="https://arxiv.org/abs/2407.21783">Llama 3 paper</a
+    >) in 30.84 million GPU-hours. That is 1.2 × 10<sup>18</sup> operations per GPU-hour, about a third
+    of the H100’s dense BF16 peak. Training takes about 6 × parameters × tokens operations (<a
+      href="https://arxiv.org/abs/2001.08361">Kaplan et al., 2020</a
+    >). Each other row trains the compute-optimal model for its hours, with about 20 tokens per
+    parameter (<a href="https://arxiv.org/abs/2203.15556">Hoffmann et al., 2022</a>). The last is
+    100 million parameters on 2 billion tokens. The top row is Llama 3.1 405B itself, which trained
+    on more tokens than that rule gives. By the rule its hours would train about 560 billion
+    parameters, so the first step down looks smaller than the others. Chip time is GPU-hours
+    divided by the 8,766 hours in a year. Arithmetic on public figures, not an AMLO result.
+  </figcaption>
+</figure>
+
+<script>
+  const figure = document.querySelector<HTMLElement>("[data-descent]");
+  const svg = figure?.querySelector<SVGSVGElement>(".descent-svg");
+  const button = figure?.querySelector<HTMLButtonElement>(".descent-play");
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (figure && svg && button) {
+    const views: number[][] = JSON.parse(figure.dataset.views ?? "[]");
+    const rows = [...figure.querySelectorAll<HTMLTableRowElement>(".descent-table tbody tr")];
+    const steps = [...figure.querySelectorAll<SVGGElement>(".descent-step")].map((g) => ({
+      g,
+      rect: g.querySelector("rect")!,
+      side: Number(g.dataset.side),
+      cx: Number(g.dataset.cx),
+      cy: Number(g.dataset.cy),
+    }));
+    const hour = steps[steps.length - 1]!;
+    const top = views[0]!;
+    let view = [...top];
+    // On the quick way back up the readout names each step; the squares' own labels rest.
+    let labelled = true;
+    figure.classList.add("is-live");
+
+    // The step whose view is nearest the current one, in scale.
+    const nearest = (w: number) =>
+      views.reduce(
+        (best, v, i) =>
+          Math.abs(Math.log(v[2]! / w)) < Math.abs(Math.log(views[best]![2]! / w)) ? i : best,
+        0,
+      );
+    // One frame: the view, the label of the step nearest it in scale (the only one sure to fit),
+    // which outlines are too small to draw, and the hour, never smaller than one pixel.
+    const paint = (v: number[]) => {
+      view = v;
+      svg.setAttribute("viewBox", `${v[0]} ${v[1]} ${v[2]} ${v[2]}`);
+      const perUnit = svg.clientWidth / v[2]!;
+      const near = nearest(v[2]!);
+      steps.forEach((s, j) => {
+        s.g.classList.toggle("is-shown", labelled && j === near);
+        if (s !== hour) s.g.classList.toggle("is-tiny", s.side * perUnit < 8);
+      });
+      // Under a pixel, the hour is one whole pixel on the pixel grid, so it is crisp, not a smear.
+      const pixel = 1 / perUnit;
+      if (hour.side >= pixel) {
+        hour.rect.setAttribute("x", String(hour.cx - hour.side / 2));
+        hour.rect.setAttribute("y", String(hour.cy - hour.side / 2));
+        hour.rect.setAttribute("width", String(hour.side));
+        hour.rect.setAttribute("height", String(hour.side));
+      } else {
+        const snap = (c: number, o: number) => o + Math.round((c - o) * perUnit - 0.5) * pixel;
+        hour.rect.setAttribute("x", String(snap(hour.cx, v[0]!)));
+        hour.rect.setAttribute("y", String(snap(hour.cy, v[1]!)));
+        hour.rect.setAttribute("width", String(pixel));
+        hour.rect.setAttribute("height", String(pixel));
+      }
+    };
+    const readout = {
+      hours: figure.querySelector(".descent-hours span")!,
+      unit: figure.querySelector(".descent-hours em")!,
+      trains: figure.querySelector(".descent-trains")!,
+      chip: figure.querySelector(".descent-chip")!,
+    };
+    let shown = 0;
+    const mark = (i: number) => {
+      rows.forEach((row, j) => row.classList.toggle("is-current", j === i));
+      const k = Math.max(0, i);
+      if (k === shown) return;
+      shown = k;
+      const row = rows[k]!;
+      readout.hours.textContent = row.dataset.hours ?? "";
+      readout.unit.textContent = row.dataset.unit ?? "";
+      readout.trains.textContent = row.dataset.trains ?? "";
+      readout.chip.textContent = `On one chip, ${row.dataset.chip ?? ""}`;
+    };
+    const wait = (ms: number) => new Promise((done) => setTimeout(done, ms));
+    const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+    // Zoom between two views about their common fixed point, so the motion is a steady
+    // magnification, not a slide.
+    const zoom = (a: number[], b: number[], ms: number, track = false) =>
+      new Promise<void>((done) => {
+        const r = b[2]! / a[2]!;
+        const fx = (b[0]! - r * a[0]!) / (1 - r);
+        const fy = (b[1]! - r * a[1]!) / (1 - r);
+        const start = performance.now();
+        const frame = (now: number) => {
+          const t = Math.min(1, (now - start) / ms);
+          const k = r ** ease(t);
+          paint([fx + k * (a[0]! - fx), fy + k * (a[1]! - fy), k * a[2]!]);
+          if (track) mark(nearest(k * a[2]!));
+          if (t < 1) requestAnimationFrame(frame);
+          else done();
+        };
+        requestAnimationFrame(frame);
+      });
+
+    let playing = false;
+    const play = async () => {
+      if (playing) return;
+      playing = true;
+      button.hidden = true;
+      figure.classList.add("is-playing");
+      paint(top);
+      mark(0);
+      await wait(900);
+      for (let i = 1; i < views.length; i++) {
+        // The readout follows the label: both name the step nearest the view as it zooms.
+        await zoom(views[i - 1]!, views[i]!, 950, true);
+        if (i < views.length - 1) await wait(450);
+      }
+      await wait(1400);
+      // Back up to the whole run in one motion, so the last frame is the first, and a replay
+      // starts where this one ends.
+      labelled = false;
+      await zoom(views[views.length - 1]!, top, 3200, true);
+      labelled = true;
+      paint(top);
+      mark(-1);
+      figure.classList.remove("is-playing");
+      button.hidden = false;
+      playing = false;
+    };
+    window.addEventListener("resize", () => paint(view));
+    paint(top);
+    // With reduced motion the still stays still: the red pixel, the table, no zoom.
+    if (!still) {
+      button.addEventListener("click", () => void play());
+      const seen = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            seen.disconnect();
+            void play();
+          }
+        },
+        { threshold: 0.6 },
+      );
+      seen.observe(svg);
+    }
+  }
+</script>

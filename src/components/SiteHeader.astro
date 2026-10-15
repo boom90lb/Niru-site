@@ -1,0 +1,37 @@
+---
+import Mark from "./Mark.astro";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const navigation = [
+  { href: "/lab/", label: "Inside AMLO" },
+  { href: "/research/", label: "Research" },
+  { href: "/about/", label: "About" },
+];
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Niru ML home">
+    <Mark />
+    <span>Niru ML</span>
+  </a>
+  <nav aria-label="Primary navigation">
+    <ul class="site-nav">
+      {
+        navigation.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={currentPath.startsWith(item.href) ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

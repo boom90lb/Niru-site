@@ -1,0 +1,19 @@
+---
+import MessagePage from "../../../components/MessagePage.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Request received - Niru ML"
+  description="Your AMLO technical-preview request was received."
+  canonicalPath="/preview/submitted/"
+  currentPath="/preview/submitted/"
+  robots="noindex,nofollow,noarchive"
+>
+  <MessagePage
+    title="Your request is in the review queue."
+    message="We will read the evaluation you described and reply from a niru.ml address. A request does not guarantee access."
+    actionHref="/lab/#method"
+    actionLabel="Read how a study runs"
+  />
+</BaseLayout>

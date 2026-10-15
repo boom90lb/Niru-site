@@ -1,0 +1,207 @@
+---
+/**
+ * The algebra window. The first model's starting view is drawn here, at build
+ * time, as an inline SVG, so the page reads without JavaScript; the script
+ * replaces it with a live canvas of the same drawing that opens boxes in place,
+ * switches between the models, plays the search's moves and the block's
+ * functors as films, and moves Monad's controls over a family.
+ */
+import { frame, toSvg } from "../ink/engine.ts";
+import { MONAD_SETTING, RANGES } from "../ink/family.ts";
+import { MODELS, view } from "../ink/models.ts";
+import { EVIDENCE, evidenceOf, framing } from "../ink/view.ts";
+
+const W = 1200;
+const H = 600;
+const model = MODELS[0]!;
+const trail = model.path.map(view);
+const start = trail[trail.length - 1]!;
+const { cam, k } = frame(framing(start), start.yaw, start.pitch, W, H, start.maxScale);
+// The family's controls: the five a reader moves, over the ranges declared for the figure.
+const CONTROLS = [
+  { key: "V", name: "v, vocabulary" },
+  { key: "L", name: "L, layers" },
+  { key: "H", name: "h, heads" },
+  { key: "K", name: "k, head width" },
+  { key: "F", name: "f, MLP width" },
+] as const;
+const svg = toSvg(
+  start.sketch.prims,
+  cam,
+  { width: W, height: H },
+  { id: "ink-still", title: start.title, desc: start.caption },
+  k,
+);
+---
+
+<figure class="ink-window" data-ink-window aria-labelledby="ink-window-title">
+  <div class="ink-head">
+    <div class="ink-title">
+      <p class="ink-kicker" id="ink-window-title">{model.kicker}</p>
+      <div class="ink-models" role="group" aria-label="Model" hidden>
+        {
+          MODELS.map((m, i) => (
+            <button type="button" data-model={m.id} aria-pressed={i === 0 ? "true" : "false"}>
+              {m.name}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    <nav class="ink-crumbs" aria-label="Levels of the drawing">
+      <ol tabindex="0">
+        {
+          trail.map((v, i) => (
+            <li>
+              <span aria-current={i === trail.length - 1 ? "location" : undefined}>{v.title}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+  </div>
+  <button
+    type="button"
+    class="ink-mobile-open"
+    aria-controls="ink-drawing-stage"
+    aria-expanded="false"
+    hidden>Open the interactive drawing</button
+  >
+  <div
+    id="ink-drawing-stage"
+    class="ink-stage"
+    role="region"
+    aria-label="Overview of the model drawing"
+    tabindex="0"
+  >
+    <div class="ink-surface">
+      <div class="ink-still" set:html={svg} />
+      <canvas class="ink-canvas" role="img" tabindex="-1" hidden></canvas>
+    </div>
+  </div>
+  <div class="ink-foot">
+    <p class="ink-say" aria-hidden="true" hidden></p>
+    <p class="ink-caption" aria-live="polite">{start.caption}</p>
+    <div class="ink-load-error" role="status" hidden>
+      <p>This part of the drawing could not load. Reload the page to try again.</p>
+      <button type="button">Reload page</button>
+    </div>
+    <div class="ink-open" hidden>
+      <span>Open</span>
+      <span class="ink-open-buttons"></span>
+    </div>
+    <div class="ink-figure" hidden></div>
+    <div class="ink-family" role="group" aria-label="Monad’s controls" hidden>
+      {
+        CONTROLS.map((c) => (
+          <label>
+            <span>{c.name}</span>
+            <input
+              type="range"
+              data-control={c.key}
+              min={RANGES[c.key].lo}
+              max={RANGES[c.key].hi}
+              step={RANGES[c.key].step}
+              value={MONAD_SETTING[c.key]}
+            />
+            <output>{MONAD_SETTING[c.key].toLocaleString("en-US")}</output>
+          </label>
+        ))
+      }
+    </div>
+    <dl class="ink-counts" hidden></dl>
+    <div class="ink-steps" role="group" aria-label="The search, chapter by chapter" hidden>
+      <span class="ink-rail" aria-hidden="true"></span>
+      <button type="button" class="ink-play">Pause</button>
+      <button type="button" class="ink-details">See details</button>
+      <span class="ink-steps-sep" aria-hidden="true"></span>
+      <button type="button" class="ink-step-back">Back</button>
+      <span class="ink-step-count"></span>
+      <button type="button" class="ink-step-next">Next</button>
+      <span class="ink-step-hint">or the arrow keys; Space pauses</span>
+    </div>
+    <div class="ink-walls" hidden></div>
+    <p class="ink-note">
+      <span class="ink-evidence">{EVIDENCE[evidenceOf(start)]}</span>{" "}
+      <span class="ink-interactive-help"
+        >Select a box to open it; the trail above or Escape goes back. With a mouse, drag to turn
+        the drawing.</span
+      >
+      <span class="ink-touch-help">Swipe sideways to explore the whole drawing.</span>
+      <span class="ink-overview-help"
+        >This overview shows the whole model. Open the interactive drawing to explore its parts at
+        full size.</span
+      >
+    </p>
+  </div>
+</figure>
+
+<script>
+  import { mount } from "../ink/window.ts";
+  mount();
+</script>
+
+<style>
+  .ink-window .ink-counts:not([hidden]) {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .ink-touch-help,
+  .ink-mobile-open,
+  .ink-overview-help {
+    display: none;
+  }
+
+  .ink-load-error:not([hidden]) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .ink-load-error p {
+    margin: 0;
+  }
+
+  .ink-mobile-open,
+  .ink-load-error button {
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 0.25rem;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .ink-window[data-ink-interactive] .ink-touch-help {
+      display: inline;
+    }
+
+    .ink-window:not([data-ink-interactive]) .ink-surface {
+      width: 100%;
+    }
+
+    .ink-window:not([data-ink-interactive]) .ink-stage {
+      overflow: hidden;
+    }
+
+    .ink-mobile-open:not([hidden]) {
+      display: inline-flex;
+      align-items: center;
+      margin: 0.75rem 0;
+    }
+
+    .ink-window:not([data-ink-interactive]) .ink-interactive-help {
+      display: none;
+    }
+
+    .ink-window:not([data-ink-interactive]) .ink-overview-help {
+      display: inline;
+    }
+  }
+</style>

@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  message: string;
+  actionHref?: string;
+  actionLabel?: string;
+}
+
+const { title, message, actionHref = "/", actionLabel = "Return home" } = Astro.props;
+---
+
+<section class="message" aria-labelledby="message-title">
+  <h1 id="message-title">{title}</h1>
+  <p>{message}</p>
+  <p><a class="button" href={actionHref}>{actionLabel}</a></p>
+</section>

@@ -1,0 +1,63 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import { splitFigures } from "../../lib/note-figures.ts";
+import { texHtml } from "../../lib/tex.ts";
+import SpectralFigures from "../../components/SpectralFigures.astro";
+import SpectralResults from "../../components/SpectralResults.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { smart } from "../../lib/typography.ts";
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notes");
+  return notes.map((note) => ({ params: { id: note.id }, props: { note } }));
+}
+
+interface Props {
+  note: CollectionEntry<"notes">;
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+const parts = splitFigures(note.rendered?.html ?? "");
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+---
+
+<BaseLayout
+  title={`${note.data.title} - Niru ML`}
+  description={note.data.description}
+  canonicalPath={`/research/${note.id}/`}
+  currentPath="/research/"
+>
+  <article class="column">
+    <header class="doc-head">
+      <p class="doc-kicker">
+        {note.data.status} · {formatDate(note.data.published)}
+        {note.data.updated && <> · updated {formatDate(note.data.updated)}</>}
+      </p>
+      <h1>{note.data.title}</h1>
+      <p class="lede">{smart(note.data.description)}</p>
+    </header>
+    {
+      note.rendered?.html ? (
+        parts.map((part) =>
+          part.figure ? (
+            <SpectralFigures figure={part.figure} />
+          ) : (
+            <div class="prose" set:html={texHtml(part.html)} />
+          ),
+        )
+      ) : (
+        <div class="prose">
+          <Content />
+        </div>
+      )
+    }
+    {note.id === "spectral-diagnostics" && <SpectralResults />}
+  </article>
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import MessagePage from "../components/MessagePage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Page not found - Niru ML"
+  description="The requested Niru ML page could not be found."
+  canonicalPath="/404/"
+  currentPath="/404/"
+  robots="noindex,nofollow,noarchive"
+>
+  <MessagePage
+    title="This page does not exist."
+    message="The address may be wrong, or the page may have moved. Go to the home page, or use the navigation."
+    actionHref="/"
+    actionLabel="Return home"
+  />
+</BaseLayout>

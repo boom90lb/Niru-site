@@ -1,0 +1,19 @@
+---
+import MessagePage from "../../../components/MessagePage.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Review your request - Niru ML"
+  description="The technical-preview request could not be accepted as submitted."
+  canonicalPath="/preview/invalid/"
+  currentPath="/preview/invalid/"
+  robots="noindex,nofollow,noarchive"
+>
+  <MessagePage
+    title="The request needs changes."
+    message="Fill in all required fields. Keep the evaluation description within its limit. Do not include confidential or sensitive information."
+    actionHref="/preview/"
+    actionLabel="Return to the request"
+  />
+</BaseLayout>

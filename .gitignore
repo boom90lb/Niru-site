@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+.venv-qa
+.venv-qa/
+node_modules
+node_modules/
+dist/
+build/
+.astro/
+.wrangler/
+playwright-report/
+test-results/
+coverage/
+.DS_Store
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# The planning interview is an operator-local execution record, not site source.
+/plans/

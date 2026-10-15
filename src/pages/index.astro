@@ -1,0 +1,202 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import AlgebraWindow from "../components/AlgebraWindow.astro";
+import DescentFigure from "../components/DescentFigure.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { hyphenated, smart } from "../lib/typography.ts";
+
+const page = await getEntry("pages", "home");
+if (!page) throw new Error("Missing home content entry");
+const { title, description, headline, lede } = page.data;
+const notes = (await getCollection("notes")).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf(),
+);
+const date = (d: Date) =>
+  new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", timeZone: "UTC" }).format(d);
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/" currentPath="/">
+  <div class="column">
+    <h1 class="hero-title">
+      {
+        hyphenated(headline ?? "").map((part) =>
+          part.keep ? <span class="nowrap">{part.text}</span> : part.text,
+        )
+      }<span class="hour-mark" aria-hidden="true"></span><span class="sr-only">.</span>
+    </h1>
+    <p class="lede">{lede}</p>
+    <p class="note">
+      AMLO is a research prototype. Its foundation software exists. The central claim, that
+      research run this way picks designs that hold at full size for less compute, is not yet
+      shown. <a href="/lab/#status">What is built</a>
+    </p>
+    <p class="actions">
+      <a class="button" href="/preview/">Arrange a conversation</a>
+      <a href="/lab/">Inside AMLO</a>
+    </p>
+  </div>
+
+  <div class="column">
+    <h2 id="models">How AMLO sees a model</h2>
+    <p>
+      AMLO writes a model as a typed term, in which every part is a definition. The drawing shows
+      two models written this way, each inside the training step that trains it. Monad is a small
+      language model, and the second is a toy version of DeepSeek-V4.1-Flash. The parameter counts
+      in the captions are computed from the definitions. Select a box to open it.
+    </p>
+  </div>
+
+  <AlgebraWindow />
+
+  <div class="column">
+    <h2 id="scale">From 3,500 years to one hour</h2>
+    <p>
+      On one chip, the 30.84 million GPU-hours of Llama 3.1 405B would take about 3,500 years (<a
+        href="https://huggingface.co/meta-llama/Llama-3.1-405B">model card</a
+      >). Each square in the drawing holds a tenth of the hours of the one before, down to the
+      single hour that trains a model of 100 million parameters. For each step, the table gives the
+      model those hours can train and the time one chip would need.
+    </p>
+  </div>
+
+  <DescentFigure />
+
+  <div class="column">
+    <p>
+      A question that needs a run of the first kind is asked a few times a year, by a few
+      organizations. A question that needs an hour can be asked a hundred times a week on one GPU,
+      by a university lab, a startup or a single researcher. More ideas get a test. Designs that
+      learn more from less data, use less energy or behave more predictably are found sooner, and
+      by more people. The cost of more capable AI then turns less on who can pay for the most runs,
+      and more on who asks the best questions.
+    </p>
+    <p>
+      The arithmetic is the easy part. A small experiment is cheap, but knowing when its answer
+      holds at full size is hard. AMLO is being built for that part. There is precedent. Yang et
+      al. tuned a proxy of 40 million parameters and moved its hyperparameters to a 6.7B GPT-3
+      model, which then beat the published 6.7B results, for a tuning cost of 7% of pretraining (<a
+        href="https://arxiv.org/abs/2203.03466">Tensor Programs V</a
+      >). That is published transfer of hyperparameters, not an AMLO result and not transfer of an
+      architecture.
+    </p>
+
+    <h2 id="problem">Why small experiments mislead</h2>
+    <p>
+      Small-scale evidence fails in known ways. A design that trained a little longer, or drew a
+      better learning rate, looks like a better design. The best of a hundred noisy scores is
+      biased upward, because the noise helped to choose it. Small and large models can also train
+      differently, so a ranking found at one size need not hold at the other (<a
+        href="https://arxiv.org/abs/2011.14522">Yang and Hu</a
+      >). In one study of architecture search, random search with early stopping did as well as
+      leading methods (<a href="https://arxiv.org/abs/1902.07638">Li and Talwalkar</a>). In
+      another, the training protocol explained more of the reported gains than the searched
+      architectures did (<a href="https://arxiv.org/abs/1912.12522">Yang, Esperança and Carlucci</a
+      >).
+    </p>
+    <p>
+      A result like this is a false green. It looks like progress because the evidence that would
+      refute it was never collected. A careful researcher catches some false greens, but that care
+      is hard to repeat, hard to audit, and does not grow with the number of experiments.
+    </p>
+
+    <h2 id="standard">The standard</h2>
+    <p>
+      Cheap evidence saves money only if it can be trusted. AMLO is being built to hold every
+      result to one standard, whatever the outcome.
+    </p>
+    <dl class="defs">
+      <dt>Declared first</dt>
+      <dd>
+        The question, what changes and what stays fixed are written down before anything runs.
+      </dd>
+      <dt>Equal footing</dt>
+      <dd>
+        Every design in a comparison gets the same resources, and the record shows what each one
+        used.
+      </dd>
+      <dt>Earned scale</dt>
+      <dd>A result found on small models counts only after it holds on larger ones.</dd>
+      <dt>Unseen data</dt>
+      <dd>The final check uses data that the search never saw.</dd>
+      <dt>Honest outcomes</dt>
+      <dd>
+        Every result is supported, inconclusive or refuted. An inconclusive result is kept, not
+        hidden.
+      </dd>
+      <dt>A full record</dt>
+      <dd>
+        Each decision records what was compared, under what resources, and why it passed or failed.
+      </dd>
+    </dl>
+    <p>
+      A language model can propose a change, but it never decides what passes. Rules fixed before
+      the run decide that. <a href="/lab/#method">Inside AMLO</a> sets out how a study runs, with its
+      tiers and statistics, and shows a simulated claim record.
+    </p>
+
+    <h2 id="savings">What it saves</h2>
+    <dl class="defs">
+      <dt>Compute</dt>
+      <dd>
+        Most designs are judged on small models and never trained large. A full-size run goes to a
+        design that has already passed every cheaper test.
+      </dd>
+      <dt>Labor</dt>
+      <dd>
+        The system runs the comparisons, applies the checks and writes the record. Researchers set
+        the question and review the decisions.
+      </dd>
+      <dt>Time</dt>
+      <dd>
+        Many small experiments fit in the time of one large run, and a weak design stops after a
+        cheap test, not after weeks at full size.
+      </dd>
+    </dl>
+    <p>
+      These are the savings the system is built to deliver, not yet measured ones. Measuring them
+      against current practice, including other proxy-based search methods, is a study of its own.
+    </p>
+
+    <h2 id="stages">Where it goes</h2>
+    <p>
+      The first application is choosing which architecture to train, before a team commits a large
+      training budget. Architecture is the first object of the search, not the last. The design
+      widens it in three stages, with the same standard at each. After the architecture comes the
+      program that trains it, with its data mixtures and their schedules, objectives, optimizers
+      and phases of training. Then comes the deployed system, with its tools, memory, retrieval,
+      verifiers and the inference resources it can spend.
+    </p>
+    <p>
+      The long-term aim goes one step further, to a system that applies the same standard to its
+      own method and keeps a change to how it searches only when the evidence supports it. That is
+      a research aim, not a stage of the current plan, and it needs evidence of its own.{" "}
+      <a href="/research/three-expansions/">Read the program note on the three stages</a>.
+    </p>
+
+    <h2 id="research">Research</h2>
+    <ul class="doc-list">
+      {
+        notes.map((note) => (
+          <li>
+            <a href={`/research/${note.id}/`}>
+              <span class="doc-title">{note.data.title}</span>
+              <span class="doc-meta">
+                {note.data.status} · {date(note.data.published)}
+              </span>
+              <span class="doc-summary">{smart(note.data.description)}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2 id="founder">Who is building it</h2>
+    <p>
+      Niru ML is an independent research initiative led by Brendon Reperttang, who graduated from
+      MIT in Computer Science and Engineering in 2024. AMLO is private, and access is by
+      introduction. Researchers, labs, investors and partners can{" "}
+      <a href="/preview/">arrange a conversation</a> and see the foundation work.{" "}
+      <a href="/about/">About Niru and its founder</a>.
+    </p>
+  </div>
+</BaseLayout>

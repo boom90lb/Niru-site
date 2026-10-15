@@ -1,0 +1,252 @@
+---
+import { getCollection } from "astro:content";
+import ClaimRecord from "../components/ClaimRecord.astro";
+import OutcomeFigure from "../components/OutcomeFigure.astro";
+import StatusLedger from "../components/StatusLedger.astro";
+import outcomes from "../data/traces/outcomes.json";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { hyphenated, smart } from "../lib/typography.ts";
+
+const title = "Inside AMLO - Niru ML";
+const description =
+  "Explore the proposed AMLO research procedure, its design illustrations, simulated records, and dated implementation ledger.";
+const headline = "Inside AMLO";
+const lede =
+  "How a study is designed to run, what it records, and what exists today. The procedure is the design AMLO is being built around.";
+const notes = (await getCollection("notes")).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf(),
+);
+const date = (d: Date) =>
+  new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", timeZone: "UTC" }).format(d);
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/lab/" currentPath="/lab/">
+  <div class="column">
+    <h1>
+      {
+        hyphenated(headline ?? "").map((part) =>
+          part.keep ? <span class="nowrap">{part.text}</span> : part.text,
+        )
+      }
+    </h1>
+    <p class="lede">{lede}</p>
+    <p class="note">
+      The diagrams model the design. The claim record is simulated. Neither demonstrates an
+      end-to-end AMLO search or a gain at target scale.
+    </p>
+
+    <h2 id="problem">Why it matters</h2>
+    <p>
+      Small-scale evidence can mislead expensive decisions. A design that wins among small models
+      can lose at full size. A candidate that trained a little longer, or drew a better learning
+      rate, looks like a better architecture. The best of a hundred noisy scores is biased upward,
+      because the noise helped to choose it. A careful researcher catches some of these. That care
+      is hard to reproduce, hard to audit and does not scale with the number of experiments.
+    </p>
+    <p>
+      A procedure that collects the evidence against a result before it spends more compute gives
+      fewer expensive false leads, a clear reason for each allocation of compute, and results that
+      a partner can examine instead of take on trust.
+    </p>
+
+    <h2 id="first">The first application</h2>
+    <p>
+      The first kind of study answers a question that comes before every large run. Of these model
+      architectures, which one should we train? Candidates are compared at small scale under one
+      fixed training recipe and matched compute. A design moves to a larger scale only when the
+      evidence at the smaller scale supports it, and it replaces the current best only when it is
+      still better at the larger scale.
+    </p>
+
+    <h2 id="method">How a study runs</h2>
+    <p>
+      AMLO is being built around this procedure. Every candidate goes through the same sequence.
+    </p>
+    <ol class="steps">
+      <li>
+        <strong>Declare.</strong> Before any run, the study states what changes, what stays fixed and
+        which resources count.
+      </li>
+      <li>
+        <strong>Check.</strong> Each proposal passes a graph check, port checks, scaling checks and a
+        static compute estimate. A proposal that fails is rejected before it trains.
+      </li>
+      <li>
+        <strong>Match compute.</strong> Within one comparison, each candidate and the current best get
+        the same compute target. A larger model trains for fewer steps, and each run records a receipt
+        of the compute it used.
+      </li>
+      <li>
+        <strong>Compare in pairs.</strong> Candidates train from one seed and are scored on the same
+        examples. Their losses are compared example by example, so much of the shared noise cancels.
+      </li>
+      <li>
+        <strong>Promote on evidence.</strong> A candidate advances only when the interval for its improvement
+        is above the current best, and an exact bound on the bootstrap’s error shows the required confidence
+        is met. A Benjamini–Hochberg filter then limits the share of false promotions in each batch.
+      </li>
+    </ol>
+    <p>
+      Promotion has three tiers. Each tier asks one question, with more compute; the later tiers
+      ask for stricter confidence than the first.
+    </p>
+    <dl class="tiers">
+      <dt>Tier 1</dt>
+      <dd>
+        Is it better at the proxy size?
+        <span>It trains with the same compute as the current best. 95% confidence.</span>
+      </dd>
+      <dt>Tier 2</dt>
+      <dd>
+        Is it reproducibly better?
+        <span>A new seed, new examples and five times the compute. 99.9% confidence.</span>
+      </dd>
+      <dt>Tier 3</dt>
+      <dd>
+        Is it still better at twice the width?
+        <span>
+          Both designs train wider, with settings moved by u-μP’s rules, under one compute target.
+          99.9% confidence.
+        </span>
+      </dd>
+    </dl>
+    <p>
+      Only a candidate that passes Tier 3 replaces the current best. Deterministic checks decide
+      what is legal, and a statistical policy decides which candidate gets compute. In a later
+      stage, an agent can propose changes, but it cannot decide what passes.
+    </p>
+
+    <h2 id="term">What the search edits</h2>
+    <p>
+      In AMLO’s next design, the whole training step is one typed expression, a term, that holds
+      the model, its loss, the gradient derived from them and the update. The search changes a
+      model by editing its term, and the cost of each edit is counted exactly from the definitions
+      before anything trains. <a href="/#models">The drawing on the home page</a> shows two models written
+      this way.
+    </p>
+    <p>
+      An exact representation can make a declared operation count exact. Hardware time and physical
+      device work are separate measurements. It does not by itself show that a small model predicts
+      a large one. That is a separate question, which Tier 3 asks of every winner and which the <a
+        href="/research/spectral-diagnostics/">spectral study</a
+      > examines in a toy model.
+    </p>
+
+    <h2 id="results">How a result is read</h2>
+    <p>
+      Each result is an improvement in held-out loss, Δ = reference loss minus candidate loss, with
+      an interval around it. Positive means the candidate has lower loss. Where the interval falls
+      against the reference gives one of three outcomes.
+    </p>
+    <OutcomeFigure />
+    <ul>
+      <li>
+        <strong>Supported.</strong> The whole interval is above the reference, at the confidence fixed
+        before the run.
+      </li>
+      <li>
+        <strong>Inconclusive.</strong> The interval crosses the reference. The record keeps the result
+        and its reason. It is not a loss.
+      </li>
+      <li><strong>Refuted.</strong> The whole interval is below the reference.</li>
+    </ul>
+    <p>
+      The final comparison uses a fixed reference, the current best when the search began, so gains
+      are never chained from one best to the next. Before it runs, the selection and the analysis
+      are frozen. An Auditor, apart from the search, holds a sealed set of examples that the search
+      never saw and opens it only after the freeze.
+    </p>
+
+    <h2 id="record">What a study records</h2>
+    <p>
+      A study ends with a claim record, whatever the outcome. The record below comes from a
+      simulated run. The site models AMLO’s proposed search rules, and the losses come from a
+      synthetic model. The site’s replay checks do not qualify AMLO’s implementation.
+    </p>
+  </div>
+
+  <ClaimRecord />
+
+  <div class="column">
+    <p>
+      In {outcomes.seeds} seeds of the same simulator, the final comparison is supported in {
+        outcomes.supported
+      }, inconclusive in {outcomes.inconclusive} and refuted in {outcomes.refuted}. A design that
+      wins the search is not certain to win at full size. The record says which happened.
+    </p>
+
+    <h2 id="status">Where it stands</h2>
+    <p>
+      AMLO is a research prototype. Its single-device reference trainer and mathematical foundation
+      exist. The search path that enforces matched compute still stops before its first training
+      step, and the restricted paths that do train do not yet produce an admitted search result.
+      The next milestone is one completed, reproducible search comparison with declared compute
+      accounting, followed by independent confirmation.
+    </p>
+    <p>
+      The central claim, that a search run this way picks designs that hold at full size for less
+      compute than the usual process, is not yet shown. The tests below are how it will be shown,
+      or refuted.
+    </p>
+    <StatusLedger />
+
+    <h2 id="stages">Where it goes</h2>
+    <p>
+      Architecture is the first object of the search, not the last. The design widens it in three
+      stages, with the same rules for comparison and evidence at each.
+    </p>
+    <ol>
+      <li>
+        <strong>Architecture and implementation.</strong> Candidate architectures change in small steps
+        under one compute budget.
+      </li>
+      <li>
+        <strong>Training program and curriculum.</strong> The program that trains the model joins the
+        search, with its data mixtures and their schedules, filters, objectives, optimizers and the phases
+        of training.
+      </li>
+      <li>
+        <strong>Deployed model–harness system.</strong> The deployed system joins the search, meaning
+        the model with its tools, memory, retrieval, verifiers and the inference resources it can spend.
+      </li>
+    </ol>
+    <p>
+      The long-term aim goes one step further, to a system that applies the same procedure to its
+      own method, and keeps a change to how it searches only when a sealed comparison supports it.
+      That is a research aim, not a stage of the current plan. It needs its own evidence that each
+      change to the method helps.
+    </p>
+    <p><a href="/research/three-expansions/">Read the program note on the three stages</a></p>
+
+    <h2 id="research">Research</h2>
+    <ul class="doc-list">
+      {
+        notes.map((note) => (
+          <li>
+            <a href={`/research/${note.id}/`}>
+              <span class="doc-title">{note.data.title}</span>
+              <span class="doc-meta">
+                {note.data.status} · {date(note.data.published)}
+              </span>
+              <span class="doc-summary">{smart(note.data.description)}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2 id="contact">Work with Niru</h2>
+    <p>
+      Niru ML is an independent research initiative led by Brendon Reperttang, who graduated from
+      MIT in Computer Science and Engineering in 2024. <a href="/about/"
+        >About Niru and its founder</a
+      >.
+    </p>
+    <p>
+      AMLO is private and under development. Researchers, labs, investors and possible partners can
+      write to <a href="mailto:brendonrt@niru.ml">brendonrt@niru.ml</a> to discuss the research and see
+      the foundation work.
+    </p>
+    <p><a class="button" href="/preview/">Arrange a conversation</a></p>
+  </div>
+</BaseLayout>

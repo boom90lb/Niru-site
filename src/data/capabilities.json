@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Reference trainer",
+    "status": "Built",
+    "summary": "The reference trainer, written with JAX, Flax and Optax, trains one configured model from start to finish on one device."
+  },
+  {
+    "name": "Candidate training in the search",
+    "status": "Partial",
+    "summary": "The search path that enforces matched compute asks for a seal before the first update and stops there, because the direct measurement of each training step's compute is not built yet. Restricted training paths without the seal exist, but they do not produce an admitted end-to-end search result."
+  },
+  {
+    "name": "Checks before training",
+    "status": "Built",
+    "summary": "Every proposal passes a graph check, port checks, declared u-μP scaling checks and a static FLOP estimate before it can train. A proposal that fails is rejected at the cost of the check."
+  },
+  {
+    "name": "Term algebra",
+    "status": "Built",
+    "summary": "AMLO implements the term layer of Abbott and Zardini's algebra of deep learning. It covers categories with copies and deletes, axes and their index maps, arrays and weaves, an operator library, and exact and real semantics, with exact forward and backward work for a program. The search does not run on it yet."
+  },
+  {
+    "name": "Compute planning",
+    "status": "Partial",
+    "summary": "A deterministic planner converts a tier's compute target into a step count. The current accounting method counts the complete training step as the compiler models it. Declarations and seals exist, but they do not yet permit a run or qualify a result. Modeled work is not physical device work or wall-clock time."
+  },
+  {
+    "name": "Paired statistical promotion",
+    "status": "Partial",
+    "summary": "A BCa bootstrap interval on paired per-example loss differences decides promotion, and its resampling seed is a hash of the evidence. A Benjamini–Hochberg filter runs over each generation's provisional promotions; the design applies it to every candidate tested. Where pairing evidence is missing, the code falls back to an unpaired interval."
+  },
+  {
+    "name": "Uncertainty-aware screening",
+    "status": "Partial",
+    "summary": "Quantile models over structural and spectral graph features rank first-tier candidates by a lower confidence bound on predicted loss. The ranking decides who trains, never who is promoted. The models fit only on trained candidates, so they have not run yet, and sampled audits of screened-out candidates are not built."
+  },
+  {
+    "name": "u-μP parameter scaling",
+    "status": "Partial",
+    "summary": "In a model that declares its scaling, the optimizer applies a u-μP factor to every parameter and refuses a parameter without one. This is a precondition for transfer; transfer itself is not tested yet."
+  },
+  {
+    "name": "Random streams and checkpoints",
+    "status": "Partial",
+    "summary": "Proposals come from a counter-based Threefry generator. Each checkpoint saves the random state with the population, and a run resumes from the last committed checkpoint. Exact recovery is not yet proven."
+  },
+  {
+    "name": "Decision record",
+    "status": "Partial",
+    "summary": "Every proposal and every rejection goes into an append-only event log, and an analytics index can be rebuilt from it. A claim bundle and a verifier for it are not built."
+  },
+  {
+    "name": "Frozen selection and sealed confirmation",
+    "status": "Partial",
+    "summary": "A one-way sequence of phases freezes the selected design before a sealed confirmation set can be used. The Auditor role and its independence receipt are not built."
+  },
+  {
+    "name": "Distributed training",
+    "status": "Not built",
+    "summary": "Training on many devices and many nodes. Placement and sharding will be recorded choices about where a run happens."
+  },
+  {
+    "name": "Training-program search",
+    "status": "Not built",
+    "summary": "Search over data mixtures, schedules, objectives and optimizers, with the program that trains a model as a candidate in its own right."
+  },
+  {
+    "name": "Deployed-system search",
+    "status": "Not built",
+    "summary": "Search over the model together with its tools, memory, retrieval, verifiers and inference budget, so that the comparison is the system a user meets."
+  },
+  {
+    "name": "Whole-training-term integration and term search",
+    "status": "Not built",
+    "summary": "The 0.0.14 design puts the whole training step in one representation, with shape-parameterized definitions, a derived backward pass and typed search edits. The term algebra exists, but joining this whole training path to the search is still design work. The drawing on the home page illustrates those definitions."
+  }
+]

@@ -1,0 +1,102 @@
+---
+import "@fontsource-variable/source-code-pro";
+import "@fontsource-variable/source-serif-4/opsz.css";
+import "@fontsource-variable/source-serif-4/wght-italic.css";
+import serifLatin from "@fontsource-variable/source-serif-4/files/source-serif-4-latin-opsz-normal.woff2?url";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  currentPath?: string;
+  robots?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalPath = Astro.url.pathname,
+  currentPath = Astro.url.pathname,
+  robots = "index,follow",
+} = Astro.props;
+const canonical = new URL(canonicalPath, Astro.site);
+const socialImage = new URL("/niru-social-card.png", Astro.site);
+const socialAlt =
+  "Niru ML. Intelligence, by better experiments. Building AMLO to search for better ways to learn.";
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://niru.ml/#brendon-reperttang",
+      name: "Brendon Reperttang",
+      url: "https://niru.ml/about/",
+      sameAs: ["https://www.linkedin.com/in/brendon-rt/", "https://boom90lb.github.io/"],
+    },
+    {
+      "@type": "Brand",
+      "@id": "https://niru.ml/#niru-ml",
+      name: "Niru ML",
+      alternateName: "Niru",
+      url: "https://niru.ml/",
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://niru.ml/#website",
+      name: "Niru ML",
+      url: "https://niru.ml/",
+      publisher: { "@id": "https://niru.ml/#brendon-reperttang" },
+      about: { "@id": "https://niru.ml/#niru-ml" },
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f5ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content={robots} />
+    <meta name="author" content="Brendon Reperttang, Niru ML" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="preload" href={serifLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/NIRUML.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Niru ML" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={socialAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={socialAlt} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="page">
+      <SiteHeader currentPath={currentPath} />
+      <main id="main-content" tabindex="-1">
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
+  </body>
+</html>

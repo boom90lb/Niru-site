@@ -1,0 +1,39 @@
+{
+  "name": "niru-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build && npm run sync:fallback",
+    "sync:fallback": "node scripts/sync-github-pages-fallback.mjs",
+    "brand": "node scripts/render-brand-assets.mjs",
+    "format": "prettier --write . --ignore-unknown",
+    "check:format": "prettier --check . --ignore-unknown",
+    "test:unit": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test",
+    "check": "npm run test:unit && npm run check:format && npm run build",
+    "trace": "node scripts/simulate-trace.ts",
+    "spectral": "uv run --no-project --python 3.15 --with numpy==2.5.4 -- python -I scripts/spectral-certificate.py && prettier --write src/data/spectral-certificate.json"
+  },
+  "dependencies": {
+    "@fontsource-variable/source-code-pro": "5.3.0",
+    "@fontsource-variable/source-serif-4": "5.3.0",
+    "astro": "7.2.2",
+    "katex": "0.16.22"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.62.1",
+    "@types/node": "24.13.3",
+    "prettier": "3.9.6",
+    "prettier-plugin-astro": "0.14.1",
+    "sharp": "0.35.3",
+    "typescript": "6.0.3"
+  }
+}

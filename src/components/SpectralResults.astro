@@ -1,0 +1,188 @@
+---
+/**
+ * The spectral study's results in text, for every scheme: the best learning
+ * rate at each width and diagnostic rows at the rate tuned at the proxy.
+ * It reads src/data/spectral-certificate.json directly, so it gives every
+ * value the figures show, including the results that leave the band.
+ */
+import raw from "../data/spectral-certificate.json";
+
+interface Row {
+  width: number;
+  failed: number;
+  act_rms_ratio?: number;
+  W_op_norm_ratio?: number;
+  dW_op_norm_ratio?: number;
+  layers?: Record<string, { W_op_norm: number; dW_op_norm: number }>;
+}
+interface Curve {
+  width: number;
+  minimum: { log2_lr: number };
+}
+const data = raw as unknown as {
+  settings: { band: [number, number]; seeds: number[] };
+  curves: Record<string, Curve[]>;
+  certificate: Record<string, { rows: Row[] }>;
+};
+
+const [lo, hi] = data.settings.band;
+const seeds = data.settings.seeds.length;
+const SCHEMES = [
+  { key: "sp", name: "Standard parameterization (SP)" },
+  { key: "umup", name: "u-μP rules in this toy" },
+  { key: "mup", name: "The input-rate variant, u-μP with μP's input-layer learning rate" },
+];
+const LAYERS = [
+  { key: "embedding", name: "Embedding" },
+  { key: "hidden_1", name: "Hidden 1" },
+  { key: "hidden_2", name: "Hidden 2" },
+  { key: "readout", name: "Readout" },
+];
+
+const multiple = (rel: number) => {
+  const m = 2 ** rel;
+  return Math.abs(rel) < 0.05 ? "1.00" : m.toFixed(2);
+};
+const ratio = (v: number | undefined) => {
+  if (v === undefined) return { text: "no run trained", out: false };
+  const out = v < lo || v > hi;
+  return { text: v.toFixed(3), out };
+};
+
+const tables = SCHEMES.map(({ key, name }) => {
+  const curves = data.curves[key]!;
+  const origin = curves[0]!.minimum.log2_lr;
+  const recorded = data.certificate[key]!.rows;
+  const rows = recorded.map((row, i) => ({
+    width: row.width,
+    best: multiple(curves[i]!.minimum.log2_lr - origin),
+    act: ratio(row.act_rms_ratio),
+    W: ratio(row.W_op_norm_ratio),
+    dW: ratio(row.dW_op_norm_ratio),
+    failed: row.failed,
+  }));
+  const proxy = recorded[0]!;
+  const layerRows = recorded.flatMap((row) =>
+    LAYERS.map(({ key: layerKey, name: layerName }) => {
+      const layer = row.layers?.[layerKey];
+      const reference = proxy.layers?.[layerKey];
+      return {
+        width: row.width,
+        name: layerName,
+        W: ratio(layer && reference ? layer.W_op_norm / reference.W_op_norm : undefined),
+        dW: ratio(layer && reference ? layer.dW_op_norm / reference.dW_op_norm : undefined),
+      };
+    }),
+  );
+  return { key, name, rows, layerRows };
+});
+---
+
+<section class="spectral-results" aria-labelledby="spectral-results-title">
+  <div class="prose">
+    <h2 id="spectral-results-title">Recorded values</h2>
+    <p>
+      Each table gives, at each width, the best learning rate as a multiple of the best rate at
+      width 64, and the three plotted ratios at the rate tuned at width 64. The descriptive band is
+      {lo.toFixed(2)} to {hi.toFixed(2)}; a ratio outside that band is marked{" "}
+      <strong>outside</strong>. Norm values average the seeds that trained, out of {seeds}, and the
+      two hidden matrices; activation RMS measures the second hidden layer. Failed runs counts the
+      seeds that did not train at the rate tuned at width 64. These are ratios of means, with no
+      per-seed uncertainty for norms or activations. Being inside the band does not certify
+      transfer.
+    </p>
+  </div>
+  {
+    tables.map((table) => (
+      <div class="table-wrap" role="region" aria-label={table.name} tabindex="0">
+        <table>
+          <caption>Hidden-layer summary, {table.name}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Width</th>
+              <th scope="col">Best learning rate</th>
+              <th scope="col">Activation RMS</th>
+              <th scope="col">
+                ‖<i>W</i>‖<sub>op</sub>
+              </th>
+              <th scope="col">
+                ‖Δ<i>W</i>‖<sub>op</sub>
+              </th>
+              <th scope="col">Failed runs</th>
+            </tr>
+          </thead>
+          <tbody>
+            {table.rows.map((row) => (
+              <tr>
+                <th scope="row">{row.width}</th>
+                <td>{row.best} ×</td>
+                {[row.act, row.W, row.dW].map((cell) => (
+                  <td class:list={{ "is-out": cell.out }}>
+                    {cell.text}
+                    {cell.out && <strong> outside</strong>}
+                  </td>
+                ))}
+                <td>
+                  {row.failed} of {seeds}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ))
+  }
+  <div class="prose">
+    <h3>Every layer, including the embedding and readout</h3>
+    <p>
+      These tables apply the same band to each layer separately. Each operator norm was normalized
+      by the square root of fan-out divided by fan-in before being averaged over successful seeds;
+      each ratio then divides that mean by its value at width 64. ΔW is the endpoint displacement,
+      W at the end minus W at the start. Values are rounded to three decimals. The input-rate
+      variant's readout leaves the band even while its hidden-layer summary stays inside it.
+    </p>
+  </div>
+  {
+    tables.map((table) => (
+      <details>
+        <summary>Show every layer's ratios, {table.name}</summary>
+        <div
+          class="table-wrap"
+          role="region"
+          aria-label={`Layer ratios, ${table.name}`}
+          tabindex="0"
+        >
+          <table>
+            <caption>Layer ratios to width 64, {table.name}</caption>
+            <thead>
+              <tr>
+                <th scope="col">Width</th>
+                <th scope="col">Layer</th>
+                <th scope="col">
+                  Normalized ‖<i>W</i>‖<sub>op</sub>
+                </th>
+                <th scope="col">
+                  Normalized ‖Δ<i>W</i>‖<sub>op</sub>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {table.layerRows.map((row) => (
+                <tr>
+                  <th scope="row">{row.width}</th>
+                  <td>{row.name}</td>
+                  {[row.W, row.dW].map((cell) => (
+                    <td class:list={{ "is-out": cell.out }}>
+                      {cell.text}
+                      {cell.out && <strong> outside</strong>}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    ))
+  }
+</section>

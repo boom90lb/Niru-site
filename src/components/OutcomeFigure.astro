@@ -1,0 +1,88 @@
+---
+/**
+ * How a result is read: three intervals against the fixed reference. A
+ * schematic, so it has no scale; the claim record carries real values.
+ */
+const W = 400;
+const H = 214;
+const zero = 104;
+const marks = [
+  { x: 92, lo: 30, hi: 78, mid: 52, kind: "supported", label: "Supported" },
+  { x: 212, lo: 64, hi: 140, mid: 92, kind: "inconclusive", label: "Inconclusive" },
+  { x: 332, lo: 126, hi: 176, mid: 150, kind: "refuted", label: "Refuted" },
+] as const;
+const cap = 7;
+---
+
+<figure class="outcome-figure">
+  <svg
+    class="plot plot--small"
+    viewBox={`0 0 ${W} ${H}`}
+    role="img"
+    aria-labelledby="outcome-title outcome-desc"
+  >
+    <title id="outcome-title">Three ways to read a result</title>
+    <desc id="outcome-desc">
+      A horizontal line marks the reference. Three vertical intervals stand on it. The first lies
+      wholly above the line and is supported. The second crosses the line and is inconclusive; its
+      center is drawn hollow. The third lies wholly below the line and is refuted.
+    </desc>
+    <line class="axis" x1="24" y1="16" x2="24" y2="186"></line>
+    <path class="axis" d="M20 22 L24 14 L28 22" fill="none"></path>
+    <text x="32" y="22">better</text>
+    <line class="reference" x1="24" y1={zero} x2={W - 4} y2={zero}></line>
+    <text x={W - 4} y={zero - 8} text-anchor="end" class="label-faint">reference</text>
+    {
+      marks.map((m) => (
+        <g>
+          <line
+            class:list={[
+              "interval",
+              m.kind === "supported" && "interval--accent",
+              m.kind === "refuted" && "interval--faint",
+            ]}
+            x1={m.x}
+            y1={m.lo}
+            x2={m.x}
+            y2={m.hi}
+          />
+          <line
+            class:list={[
+              "interval",
+              m.kind === "supported" && "interval--accent",
+              m.kind === "refuted" && "interval--faint",
+            ]}
+            x1={m.x - cap}
+            y1={m.lo}
+            x2={m.x + cap}
+            y2={m.lo}
+          />
+          <line
+            class:list={[
+              "interval",
+              m.kind === "supported" && "interval--accent",
+              m.kind === "refuted" && "interval--faint",
+            ]}
+            x1={m.x - cap}
+            y1={m.hi}
+            x2={m.x + cap}
+            y2={m.hi}
+          />
+          <circle
+            class:list={[
+              m.kind === "supported" && "dot dot--accent",
+              m.kind === "inconclusive" && "dot--hollow",
+              m.kind === "refuted" && "dot dot--faint",
+            ]}
+            cx={m.x}
+            cy={m.mid}
+            r={m.kind === "inconclusive" ? 4.5 : 4}
+          />
+          <text x={m.x} y={H - 6} text-anchor="middle" class="label-strong">
+            {m.label}
+          </text>
+        </g>
+      ))
+    }
+  </svg>
+</figure>

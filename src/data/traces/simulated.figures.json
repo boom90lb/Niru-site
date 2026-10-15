@@ -1,0 +1,3274 @@
+{
+  "schema": "niru.search-trace/1",
+  "source": {
+    "kind": "simulated",
+    "generator": "niru-site src/lib/trace/simulate.ts",
+    "seed": 4907,
+    "note": "Simulated run. The search rules are derived from AMLO's code; the losses come from a synthetic loss model."
+  },
+  "objective": { "metric": "loss", "unit": "nats per token", "direction": "minimize" },
+  "policy": {
+    "population_size": 8,
+    "elite_size": 2,
+    "tournament_size": 5,
+    "crossover_rate": 0.5,
+    "mutation_rate": 0.8,
+    "surrogate_screening_rate": 0.5,
+    "promotion_mode": "enforced",
+    "fdr_q": 0.05,
+    "bootstrap_resamples": 2000,
+    "confidence_level": 0.95,
+    "min_examples_for_bootstrap": 20,
+    "max_relative_compute_slack": 0.01,
+    "tiers": [
+      {
+        "tier": 1,
+        "target_compute_flops": 20000000000000,
+        "global_batch": 8,
+        "sequence_length": 128,
+        "step_ceiling": 250000,
+        "n_examples": 32,
+        "required_confidence": 0.95,
+        "change": { "new_seed": false, "new_examples": false, "width_multiplier": 1 }
+      },
+      {
+        "tier": 2,
+        "target_compute_flops": 100000000000000,
+        "global_batch": 8,
+        "sequence_length": 128,
+        "step_ceiling": 250000,
+        "n_examples": 32,
+        "required_confidence": 0.999,
+        "change": { "new_seed": true, "new_examples": true, "width_multiplier": 1 }
+      },
+      {
+        "tier": 3,
+        "target_compute_flops": 400000000000000,
+        "global_batch": 8,
+        "sequence_length": 128,
+        "step_ceiling": 250000,
+        "n_examples": 32,
+        "required_confidence": 0.999,
+        "change": { "new_seed": true, "new_examples": true, "width_multiplier": 2 }
+      }
+    ],
+    "screen_audit_draws": 1,
+    "max_relative_compute_error": 0.02,
+    "budget_accounts": {
+      "search": 800000000000000,
+      "replication": 1600000000000000,
+      "transfer": 2400000000000000,
+      "audit": 100000000000000,
+      "confirmation": 2.04e21
+    },
+    "target": {
+      "target_compute_flops": 1e21,
+      "global_batch": 1024,
+      "sequence_length": 128,
+      "target_params": 1300000000,
+      "depth_multiplier": 3,
+      "n_examples": 256,
+      "required_confidence": 0.999
+    }
+  },
+  "reference": {
+    "arch_hash": "e99af81faae3",
+    "tier_losses": { "1": 4.52716, "2": 3.80585, "3": 3.74183 }
+  },
+  "architectures": {
+    "e99af81faae3": {
+      "arch_hash": "e99af81faae3",
+      "body": ["gpt_block", "gpt_block"],
+      "width": 512,
+      "num_heads": 16,
+      "params": 10490880,
+      "flops_per_token": 51118100,
+      "fiedler_unweighted": 0.19098
+    },
+    "5ce09d7f9368": {
+      "arch_hash": "5ce09d7f9368",
+      "body": ["gpt_block", "gpt_block"],
+      "width": 256,
+      "num_heads": 8,
+      "params": 3672576,
+      "flops_per_token": 16121900,
+      "fiedler_unweighted": 0.19098
+    },
+    "fc232eac39b7": {
+      "arch_hash": "fc232eac39b7",
+      "body": ["gpt_block"],
+      "width": 512,
+      "num_heads": 16,
+      "params": 7343104,
+      "flops_per_token": 31850500,
+      "fiedler_unweighted": 0.29289
+    },
+    "4d4892942da3": {
+      "arch_hash": "4d4892942da3",
+      "body": ["gpt_block", "gpt_block", "gpt_block"],
+      "width": 256,
+      "num_heads": 8,
+      "params": 4460032,
+      "flops_per_token": 21037100,
+      "fiedler_unweighted": 0.13397
+    },
+    "e9f786041ea9": {
+      "arch_hash": "e9f786041ea9",
+      "body": ["gpt_block", "gpt_block"],
+      "width": 1024,
+      "num_heads": 16,
+      "params": 33564672,
+      "flops_per_token": 177734000,
+      "fiedler_unweighted": 0.19098
+    },
+    "db221d92489f": {
+      "arch_hash": "db221d92489f",
+      "body": ["gpt_block"],
+      "width": 256,
+      "num_heads": 8,
+      "params": 2885120,
+      "flops_per_token": 11206700,
+      "fiedler_unweighted": 0.29289
+    },
+    "a9e2d4fd87bc": {
+      "arch_hash": "a9e2d4fd87bc",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 128,
+      "num_heads": 4,
+      "params": 1837312,
+      "flops_per_token": 8257540,
+      "fiedler_unweighted": 0.09903
+    },
+    "7b5fdff084b7": {
+      "arch_hash": "7b5fdff084b7",
+      "body": ["gpt_block", "gpt_block", "gpt_block"],
+      "width": 128,
+      "num_heads": 4,
+      "params": 1640192,
+      "flops_per_token": 6979580,
+      "fiedler_unweighted": 0.13397
+    },
+    "7f0ff9fec5b7": {
+      "arch_hash": "7f0ff9fec5b7",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 128,
+      "num_heads": 4,
+      "params": 2034432,
+      "flops_per_token": 9535490,
+      "fiedler_unweighted": 0.07612
+    },
+    "a38ef92799cf": {
+      "arch_hash": "a38ef92799cf",
+      "body": ["gpt_block", "gpt_block"],
+      "width": 128,
+      "num_heads": 4,
+      "params": 1443072,
+      "flops_per_token": 5701630,
+      "fiedler_unweighted": 0.19098
+    },
+    "d67c62329284": {
+      "arch_hash": "d67c62329284",
+      "body": ["gpt_block", "gpt_block", "gpt_block"],
+      "width": 512,
+      "num_heads": 16,
+      "params": 13638656,
+      "flops_per_token": 70385700,
+      "fiedler_unweighted": 0.13397
+    },
+    "e4df851c8e96": {
+      "arch_hash": "e4df851c8e96",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 64,
+      "num_heads": 2,
+      "params": 820864,
+      "flops_per_token": 3637250,
+      "fiedler_unweighted": 0.06031
+    },
+    "6f5ae1d94b64": {
+      "arch_hash": "6f5ae1d94b64",
+      "body": ["gpt_block", "gpt_block", "gpt_block"],
+      "width": 64,
+      "num_heads": 2,
+      "params": 672640,
+      "flops_per_token": 2605060,
+      "fiedler_unweighted": 0.13397
+    },
+    "51dd3eb3ce3a": {
+      "arch_hash": "51dd3eb3ce3a",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 512,
+      "num_heads": 16,
+      "params": 23081984,
+      "flops_per_token": 128188000,
+      "fiedler_unweighted": 0.06031
+    },
+    "56094cdbc8ac": {
+      "arch_hash": "56094cdbc8ac",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 128,
+      "num_heads": 4,
+      "params": 2231552,
+      "flops_per_token": 10813400,
+      "fiedler_unweighted": 0.06031
+    },
+    "7421df2a9f45": {
+      "arch_hash": "7421df2a9f45",
+      "body": ["gpt_block"],
+      "width": 128,
+      "num_heads": 4,
+      "params": 1245952,
+      "flops_per_token": 4423680,
+      "fiedler_unweighted": 0.29289
+    },
+    "59a75d2e949c": {
+      "arch_hash": "59a75d2e949c",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 256,
+      "num_heads": 8,
+      "params": 6034944,
+      "flops_per_token": 30867500,
+      "fiedler_unweighted": 0.07612
+    },
+    "a751a11721bc": {
+      "arch_hash": "a751a11721bc",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 64,
+      "num_heads": 2,
+      "params": 771456,
+      "flops_per_token": 3293180,
+      "fiedler_unweighted": 0.07612
+    },
+    "9ae1c63e4f7b": {
+      "arch_hash": "9ae1c63e4f7b",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 1024,
+      "num_heads": 16,
+      "params": 58738688,
+      "flops_per_token": 330301000,
+      "fiedler_unweighted": 0.09903
+    },
+    "3fd2e28be89b": {
+      "arch_hash": "3fd2e28be89b",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 256,
+      "num_heads": 8,
+      "params": 6822400,
+      "flops_per_token": 35782700,
+      "fiedler_unweighted": 0.06031
+    },
+    "9cc825207504": {
+      "arch_hash": "9cc825207504",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 1024,
+      "num_heads": 16,
+      "params": 83912704,
+      "flops_per_token": 482869000,
+      "fiedler_unweighted": 0.06031
+    },
+    "1c41a1b4b6fd": {
+      "arch_hash": "1c41a1b4b6fd",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 128,
+      "num_heads": 4,
+      "params": 2428672,
+      "flops_per_token": 12091400,
+      "fiedler_unweighted": 0.04894
+    },
+    "3153e9773d4a": {
+      "arch_hash": "3153e9773d4a",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 1024,
+      "num_heads": 16,
+      "params": 96499712,
+      "flops_per_token": 559153000,
+      "fiedler_unweighted": 0.04894
+    },
+    "2f5db2e6ba37": {
+      "arch_hash": "2f5db2e6ba37",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 512,
+      "num_heads": 16,
+      "params": 26229760,
+      "flops_per_token": 147456000,
+      "fiedler_unweighted": 0.04894
+    },
+    "92f3d8c1cd5b": {
+      "arch_hash": "92f3d8c1cd5b",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 128,
+      "num_heads": 4,
+      "params": 2625792,
+      "flops_per_token": 13369300,
+      "fiedler_unweighted": 0.04051
+    },
+    "08ca7fb0b964": {
+      "arch_hash": "08ca7fb0b964",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 512,
+      "num_heads": 16,
+      "params": 19934208,
+      "flops_per_token": 108921000,
+      "fiedler_unweighted": 0.07612
+    },
+    "81c2378d136e": {
+      "arch_hash": "81c2378d136e",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 64,
+      "num_heads": 2,
+      "params": 870272,
+      "flops_per_token": 3981310,
+      "fiedler_unweighted": 0.04894
+    },
+    "c9a843fa74d5": {
+      "arch_hash": "c9a843fa74d5",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 1024,
+      "num_heads": 16,
+      "params": 109086720,
+      "flops_per_token": 635437000,
+      "fiedler_unweighted": 0.04051
+    },
+    "076acf30dac8": {
+      "arch_hash": "076acf30dac8",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 256,
+      "num_heads": 8,
+      "params": 7609856,
+      "flops_per_token": 40697900,
+      "fiedler_unweighted": 0.04894
+    },
+    "817679e2059e": {
+      "arch_hash": "817679e2059e",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 64,
+      "num_heads": 2,
+      "params": 919680,
+      "flops_per_token": 4325380,
+      "fiedler_unweighted": 0.04051
+    },
+    "145c410422fd": {
+      "arch_hash": "145c410422fd",
+      "body": ["gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block", "gpt_block"],
+      "width": 4096,
+      "num_heads": 16,
+      "params": 1241620480,
+      "flops_per_token": 7367290000,
+      "fiedler_unweighted": 0.06031
+    },
+    "b12c452557c3": {
+      "arch_hash": "b12c452557c3",
+      "body": [
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block",
+        "gpt_block"
+      ],
+      "width": 2304,
+      "num_heads": 16,
+      "params": 1356793344,
+      "flops_per_token": 8120110000,
+      "fiedler_unweighted": 0.00856
+    }
+  },
+  "snapshots": [
+    {
+      "generation": 1,
+      "incumbent": "e99af81faae3",
+      "incumbent_tier_losses": { "1": 4.52716, "2": 3.80585, "3": 3.74183 },
+      "population": [
+        "e99af81faae3",
+        "5ce09d7f9368",
+        "fc232eac39b7",
+        "4d4892942da3",
+        "e9f786041ea9",
+        "db221d92489f",
+        "a9e2d4fd87bc",
+        "7b5fdff084b7"
+      ],
+      "elites": ["e99af81faae3", "a9e2d4fd87bc"]
+    },
+    {
+      "generation": 2,
+      "incumbent": "7f0ff9fec5b7",
+      "incumbent_tier_losses": { "1": 4.29885, "2": 3.77419, "3": 3.31211 },
+      "population": [
+        "e99af81faae3",
+        "a9e2d4fd87bc",
+        "7f0ff9fec5b7",
+        "a38ef92799cf",
+        "d67c62329284",
+        "e4df851c8e96",
+        "6f5ae1d94b64",
+        "51dd3eb3ce3a"
+      ],
+      "elites": ["7f0ff9fec5b7", "e99af81faae3"]
+    },
+    {
+      "generation": 3,
+      "incumbent": "1c41a1b4b6fd",
+      "incumbent_tier_losses": { "1": 4.24036, "2": 3.72271, "3": 3.27901 },
+      "population": [
+        "7f0ff9fec5b7",
+        "e99af81faae3",
+        "56094cdbc8ac",
+        "7421df2a9f45",
+        "59a75d2e949c",
+        "a751a11721bc",
+        "3fd2e28be89b",
+        "1c41a1b4b6fd"
+      ],
+      "elites": ["1c41a1b4b6fd", "7f0ff9fec5b7"]
+    }
+  ],
+  "events": [
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a0",
+      "generation": 1,
+      "candidate_arch_hash": "7b5fdff084b7",
+      "origin_parent_arch_hashes": ["a9e2d4fd87bc"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a0",
+      "generation": 1,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "origin_parent_arch_hashes": ["a9e2d4fd87bc", "e99af81faae3"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a2",
+      "generation": 1,
+      "candidate_arch_hash": "a38ef92799cf",
+      "origin_parent_arch_hashes": ["e99af81faae3", "a9e2d4fd87bc"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a2",
+      "generation": 1,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a3",
+      "generation": 1,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["4d4892942da3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a3",
+      "generation": 1,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a4",
+      "generation": 1,
+      "candidate_arch_hash": "e4df851c8e96",
+      "origin_parent_arch_hashes": ["a9e2d4fd87bc", "e99af81faae3"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a4",
+      "generation": 1,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a5",
+      "generation": 1,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a5",
+      "generation": 1,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a6",
+      "generation": 1,
+      "candidate_arch_hash": "db221d92489f",
+      "origin_parent_arch_hashes": ["4d4892942da3", "a9e2d4fd87bc"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a6",
+      "generation": 1,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a7",
+      "generation": 1,
+      "candidate_arch_hash": "6f5ae1d94b64",
+      "origin_parent_arch_hashes": ["a9e2d4fd87bc", "e99af81faae3"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a7",
+      "generation": 1,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g1:a8",
+      "generation": 1,
+      "candidate_arch_hash": "51dd3eb3ce3a",
+      "origin_parent_arch_hashes": ["a9e2d4fd87bc", "e99af81faae3"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g1:a8",
+      "generation": 1,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.31127,
+          "q50": 4.36682,
+          "q84": 4.42236,
+          "bound": 4.25795,
+          "rank": 1
+        }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g1:a2",
+      "generation": 1,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.37273,
+          "q50": 4.42968,
+          "q84": 4.48664,
+          "bound": 4.31805,
+          "rank": 2
+        }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g1:a3",
+      "generation": 1,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.67987,
+          "q50": 4.69673,
+          "q84": 4.71359,
+          "bound": 4.66369,
+          "rank": 5
+        },
+        "audit": { "drawn": false, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g1:a4",
+      "generation": 1,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.64782,
+          "q50": 4.68776,
+          "q84": 4.7277,
+          "bound": 4.60947,
+          "rank": 3
+        }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g1:a7",
+      "generation": 1,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.67311,
+          "q50": 4.70749,
+          "q84": 4.74187,
+          "bound": 4.64011,
+          "rank": 4
+        },
+        "audit": { "drawn": false, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g1:a8",
+      "generation": 1,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.82831,
+          "q50": 4.86048,
+          "q84": 4.89265,
+          "bound": 4.79742,
+          "rank": 6
+        },
+        "audit": { "drawn": true, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g1:a8",
+      "generation": 1,
+      "candidate_arch_hash": "51dd3eb3ce3a",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.85194,
+        "fitness": -4.85194,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 152,
+          "selected_flops_per_token": 128188000,
+          "planned_compute_flops": 19952300000000,
+          "relative_compute_slack": 0.002386
+        },
+        "n_examples": 32,
+        "account": "audit",
+        "receipt": { "realized_compute_flops": 19973800000000, "relative_compute_error": -0.00131 }
+      }
+    },
+    {
+      "event_type": "audit.recorded",
+      "proposal_id": "sim:g1:a8",
+      "generation": 1,
+      "candidate_arch_hash": "51dd3eb3ce3a",
+      "payload": {
+        "tier": 1,
+        "probability": 0.33333,
+        "observed_diff": -0.32478,
+        "screen_missed": false,
+        "audience": "auditor",
+        "released": false
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.29885,
+        "fitness": -4.29885,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 2048,
+          "selected_flops_per_token": 9535490,
+          "planned_compute_flops": 19997400000000,
+          "relative_compute_slack": 0.0001316
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": { "realized_compute_flops": 20028000000000, "relative_compute_error": 0.001399 }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g1:a2",
+      "generation": 1,
+      "candidate_arch_hash": "a38ef92799cf",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.32404,
+        "fitness": -4.32404,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 3425,
+          "selected_flops_per_token": 5701630,
+          "planned_compute_flops": 19996800000000,
+          "relative_compute_slack": 0.0001618
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": { "realized_compute_flops": 20125100000000, "relative_compute_error": 0.006257 }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g1:a4",
+      "generation": 1,
+      "candidate_arch_hash": "e4df851c8e96",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.58835,
+        "fitness": -4.58835,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 5369,
+          "selected_flops_per_token": 3637250,
+          "planned_compute_flops": 19997100000000,
+          "relative_compute_slack": 0.0001467
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": { "realized_compute_flops": 20150200000000, "relative_compute_error": 0.007508 }
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.22831,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "ci_lower": 0.20262,
+        "ci_upper": 0.25233,
+        "p_value": 0,
+        "confidence": 0.9966632734227846,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.17957, 0.20532, 0.20976, 0.21229, 0.21425, 0.21574, 0.21719, 0.21898, 0.21992, 0.22121,
+          0.22239, 0.22342, 0.2243, 0.22531, 0.22652, 0.22779, 0.22877, 0.22979, 0.23084, 0.23182,
+          0.23287, 0.23378, 0.23493, 0.23607, 0.23723, 0.23853, 0.23987, 0.2415, 0.24283, 0.24536,
+          0.2482, 0.25238, 0.26975
+        ],
+        "n_resamples": 2000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.003336726577215397,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 1,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g1:a2",
+      "generation": 1,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.20312,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "ci_lower": 0.17936,
+        "ci_upper": 0.22528,
+        "p_value": 0,
+        "confidence": 0.9966632734227846,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.16281, 0.18046, 0.18446, 0.18707, 0.18914, 0.19083, 0.19224, 0.19359, 0.19477, 0.19613,
+          0.19723, 0.19818, 0.19928, 0.20031, 0.20118, 0.20221, 0.20317, 0.20413, 0.20515, 0.20614,
+          0.20721, 0.2082, 0.2093, 0.21034, 0.21136, 0.21248, 0.21392, 0.21514, 0.21653, 0.21873,
+          0.22105, 0.22432, 0.24365
+        ],
+        "n_resamples": 2000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.003336726577215397,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 1,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g1:a4",
+      "generation": 1,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": false,
+        "reason": "LOSS_NOT_IMPROVED",
+        "observed_diff": -0.06119,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "fdr_verdict": "rejected"
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "payload": {
+        "tier": 2,
+        "sound": true,
+        "loss": 3.77419,
+        "fitness": -3.77419,
+        "compute_budget_plan": {
+          "target_compute_flops": 100000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 10241,
+          "selected_flops_per_token": 9535490,
+          "planned_compute_flops": 99996600000000,
+          "relative_compute_slack": 0.00003397
+        },
+        "n_examples": 32,
+        "account": "replication",
+        "receipt": {
+          "realized_compute_flops": 100872000000000,
+          "relative_compute_error": 0.008715
+        }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g1:a2",
+      "generation": 1,
+      "candidate_arch_hash": "a38ef92799cf",
+      "payload": {
+        "tier": 2,
+        "sound": true,
+        "loss": 3.94099,
+        "fitness": -3.94099,
+        "compute_budget_plan": {
+          "target_compute_flops": 100000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 17127,
+          "selected_flops_per_token": 5701630,
+          "planned_compute_flops": 99995500000000,
+          "relative_compute_slack": 0.00004504
+        },
+        "n_examples": 32,
+        "account": "replication",
+        "receipt": {
+          "realized_compute_flops": 100094000000000,
+          "relative_compute_error": 0.0009366
+        }
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "payload": {
+        "from_tier": 2,
+        "to_tier": 3,
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.03166,
+        "required_confidence": 0.999,
+        "fdr_q": 0.05,
+        "ci_lower": 0.01585,
+        "ci_upper": 0.04581,
+        "p_value": 0,
+        "confidence": 0.9991647725308479,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.00262, 0.01717, 0.01972, 0.02138, 0.02268, 0.02373, 0.02477, 0.02561, 0.02638, 0.02718,
+          0.02788, 0.02856, 0.02924, 0.02987, 0.03048, 0.03111, 0.03171, 0.03228, 0.03294, 0.03359,
+          0.0342, 0.03481, 0.03545, 0.03611, 0.03686, 0.03762, 0.03845, 0.03937, 0.04037, 0.04168,
+          0.04335, 0.04565, 0.05828
+        ],
+        "n_resamples": 8000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.0008352274691521069,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 2,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g1:a2",
+      "generation": 1,
+      "payload": {
+        "from_tier": 2,
+        "to_tier": 3,
+        "promote": false,
+        "reason": "LOSS_NOT_IMPROVED",
+        "observed_diff": -0.13514,
+        "required_confidence": 0.999,
+        "fdr_q": 0.05,
+        "fdr_verdict": "rejected"
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "payload": {
+        "tier": 3,
+        "sound": true,
+        "loss": 3.31211,
+        "fitness": -3.31211,
+        "compute_budget_plan": {
+          "target_compute_flops": 400000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 12654,
+          "selected_flops_per_token": 30867500,
+          "planned_compute_flops": 399971000000000,
+          "relative_compute_slack": 0.00007222
+        },
+        "n_examples": 32,
+        "width_multiplier": 2,
+        "account": "transfer",
+        "receipt": {
+          "realized_compute_flops": 400014000000000,
+          "relative_compute_error": 0.00003598
+        }
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "payload": {
+        "from_tier": 3,
+        "to_tier": "best",
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.42972,
+        "required_confidence": 0.999,
+        "fdr_q": 0.05,
+        "ci_lower": 0.41771,
+        "ci_upper": 0.44227,
+        "p_value": 0,
+        "confidence": 0.9991647725308479,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.40803, 0.4181, 0.42016, 0.42149, 0.4225, 0.42347, 0.42413, 0.4249, 0.42552, 0.42609,
+          0.42664, 0.42719, 0.42769, 0.4282, 0.42866, 0.42918, 0.42967, 0.43012, 0.4306, 0.4311,
+          0.4316, 0.43218, 0.43269, 0.43327, 0.43389, 0.43448, 0.43519, 0.43597, 0.43687, 0.43791,
+          0.43911, 0.44141, 0.45676
+        ],
+        "n_resamples": 8000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.0008352274691521069,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 2,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "incumbent.updated",
+      "proposal_id": "sim:g1:a1",
+      "generation": 1,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "payload": {
+        "previous": "e99af81faae3",
+        "reason": "tier3_gate",
+        "replaced": true,
+        "tier_losses": { "1": 4.29885, "2": 3.77419, "3": 3.31211 }
+      }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a0",
+      "generation": 2,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a0",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a1",
+      "generation": 2,
+      "candidate_arch_hash": "5ce09d7f9368",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a1",
+      "generation": 2,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a2",
+      "generation": 2,
+      "candidate_arch_hash": "a38ef92799cf",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a2",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a3",
+      "generation": 2,
+      "candidate_arch_hash": "7421df2a9f45",
+      "origin_parent_arch_hashes": ["a38ef92799cf"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a3",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a4",
+      "generation": 2,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a4",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a5",
+      "generation": 2,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a5",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a6",
+      "generation": 2,
+      "candidate_arch_hash": "59a75d2e949c",
+      "origin_parent_arch_hashes": ["a38ef92799cf", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a6",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a7",
+      "generation": 2,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a7",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a8",
+      "generation": 2,
+      "candidate_arch_hash": "a751a11721bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a8",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a9",
+      "generation": 2,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a9",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a10",
+      "generation": 2,
+      "candidate_arch_hash": "a9e2d4fd87bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a10",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a11",
+      "generation": 2,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a11",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a12",
+      "generation": 2,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3", "e99af81faae3"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a12",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a13",
+      "generation": 2,
+      "candidate_arch_hash": "9ae1c63e4f7b",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "a38ef92799cf"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a13",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "failed", "detail": "no_token_budget" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a14",
+      "generation": 2,
+      "candidate_arch_hash": "e99af81faae3",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a14",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a15",
+      "generation": 2,
+      "candidate_arch_hash": "a751a11721bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a15",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a16",
+      "generation": 2,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a16",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a17",
+      "generation": 2,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a17",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a18",
+      "generation": 2,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a18",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a19",
+      "generation": 2,
+      "candidate_arch_hash": "59a75d2e949c",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a19",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a20",
+      "generation": 2,
+      "candidate_arch_hash": "e99af81faae3",
+      "origin_parent_arch_hashes": ["e99af81faae3", "a9e2d4fd87bc"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a20",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a21",
+      "generation": 2,
+      "candidate_arch_hash": "3fd2e28be89b",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a21",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a22",
+      "generation": 2,
+      "candidate_arch_hash": "a9e2d4fd87bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a22",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a23",
+      "generation": 2,
+      "candidate_arch_hash": "9cc825207504",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a23",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "failed", "detail": "no_token_budget" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a24",
+      "generation": 2,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a24",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a25",
+      "generation": 2,
+      "candidate_arch_hash": "e99af81faae3",
+      "origin_parent_arch_hashes": ["e99af81faae3", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a25",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a26",
+      "generation": 2,
+      "candidate_arch_hash": "e99af81faae3",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a26",
+      "generation": 2,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a27",
+      "generation": 2,
+      "candidate_arch_hash": "7b5fdff084b7",
+      "origin_parent_arch_hashes": ["a9e2d4fd87bc"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a27",
+      "generation": 2,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g2:a0",
+      "generation": 2,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.31118,
+          "q50": 4.35019,
+          "q84": 4.38919,
+          "bound": 4.27374,
+          "rank": 3
+        }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g2:a3",
+      "generation": 2,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.65274,
+          "q50": 4.69086,
+          "q84": 4.72899,
+          "bound": 4.61614,
+          "rank": 6
+        },
+        "audit": { "drawn": true, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g2:a6",
+      "generation": 2,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.28526,
+          "q50": 4.31657,
+          "q84": 4.34788,
+          "bound": 4.2552,
+          "rank": 2
+        }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g2:a8",
+      "generation": 2,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.64385,
+          "q50": 4.67492,
+          "q84": 4.706,
+          "bound": 4.61402,
+          "rank": 5
+        },
+        "audit": { "drawn": false, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g2:a21",
+      "generation": 2,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.36244,
+          "q50": 4.3762,
+          "q84": 4.38995,
+          "bound": 4.34924,
+          "rank": 4
+        },
+        "audit": { "drawn": false, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.22352,
+          "q50": 4.26288,
+          "q84": 4.30224,
+          "bound": 4.18574,
+          "rank": 1
+        }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g2:a3",
+      "generation": 2,
+      "candidate_arch_hash": "7421df2a9f45",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.65887,
+        "fitness": -4.65887,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 4415,
+          "selected_flops_per_token": 4423680,
+          "planned_compute_flops": 19999300000000,
+          "relative_compute_slack": 0.00003598
+        },
+        "n_examples": 32,
+        "account": "audit",
+        "receipt": { "realized_compute_flops": 20039700000000, "relative_compute_error": 0.001984 }
+      }
+    },
+    {
+      "event_type": "audit.recorded",
+      "proposal_id": "sim:g2:a3",
+      "generation": 2,
+      "candidate_arch_hash": "7421df2a9f45",
+      "payload": {
+        "tier": 1,
+        "probability": 0.33333,
+        "observed_diff": -0.36002,
+        "screen_missed": false,
+        "audience": "auditor",
+        "released": false
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g2:a0",
+      "generation": 2,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.24745,
+        "fitness": -4.24745,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 1806,
+          "selected_flops_per_token": 10813400,
+          "planned_compute_flops": 19997800000000,
+          "relative_compute_slack": 0.0001115
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": { "realized_compute_flops": 20065600000000, "relative_compute_error": 0.003282 }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g2:a6",
+      "generation": 2,
+      "candidate_arch_hash": "59a75d2e949c",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.27872,
+        "fitness": -4.27872,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 632,
+          "selected_flops_per_token": 30867500,
+          "planned_compute_flops": 19976400000000,
+          "relative_compute_slack": 0.001179
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": { "realized_compute_flops": 20033100000000, "relative_compute_error": 0.001653 }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.24036,
+        "fitness": -4.24036,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 1615,
+          "selected_flops_per_token": 12091400,
+          "planned_compute_flops": 19996300000000,
+          "relative_compute_slack": 0.000187
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": { "realized_compute_flops": 20121500000000, "relative_compute_error": 0.006073 }
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.05849,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "ci_lower": 0.03465,
+        "ci_upper": 0.08435,
+        "p_value": 0,
+        "confidence": 0.9966632734227846,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.0139, 0.03525, 0.03943, 0.04163, 0.04344, 0.04538, 0.04701, 0.04846, 0.04995, 0.05102,
+          0.05208, 0.05328, 0.0542, 0.05523, 0.05612, 0.05729, 0.0581, 0.05917, 0.06051, 0.06143,
+          0.06268, 0.06382, 0.06497, 0.06613, 0.0676, 0.06893, 0.07028, 0.07186, 0.0739, 0.07637,
+          0.07893, 0.08241, 0.10281
+        ],
+        "n_resamples": 2000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.003336726577215397,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 1,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g2:a0",
+      "generation": 2,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.0514,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "ci_lower": 0.02945,
+        "ci_upper": 0.0742,
+        "p_value": 0,
+        "confidence": 0.9966632734227846,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.01535, 0.03027, 0.03362, 0.0358, 0.03797, 0.0396, 0.04088, 0.04207, 0.04329, 0.04434,
+          0.04542, 0.04651, 0.04755, 0.04855, 0.04948, 0.05035, 0.05128, 0.05218, 0.05304, 0.05382,
+          0.05472, 0.05572, 0.0569, 0.05799, 0.05919, 0.06042, 0.06185, 0.06312, 0.06482, 0.06669,
+          0.06919, 0.07251, 0.09009
+        ],
+        "n_resamples": 2000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.003336726577215397,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 1,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g2:a6",
+      "generation": 2,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": false,
+        "reason": "CI_CROSSES_ZERO",
+        "observed_diff": 0.02013,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "ci_lower": -0.00074,
+        "ci_upper": 0.04185,
+        "p_value": 0.0305,
+        "confidence": 0.9560373229378843,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          -0.01871, 0.00034, 0.00335, 0.00553, 0.00732, 0.00849, 0.01019, 0.01166, 0.0128, 0.01364,
+          0.01457, 0.01567, 0.01637, 0.01745, 0.01826, 0.01916, 0.02012, 0.02104, 0.02171, 0.02251,
+          0.02343, 0.0243, 0.02518, 0.02603, 0.02694, 0.02799, 0.02939, 0.0312, 0.03273, 0.03445,
+          0.03703, 0.04103, 0.05953
+        ],
+        "n_resamples": 2000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 61,
+        "tail_lower_bound": 0.020136425776243874,
+        "tail_upper_bound": 0.04396267706211565,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 1,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "tier": 2,
+        "sound": true,
+        "loss": 3.72271,
+        "fitness": -3.72271,
+        "compute_budget_plan": {
+          "target_compute_flops": 100000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 8076,
+          "selected_flops_per_token": 12091400,
+          "planned_compute_flops": 99993700000000,
+          "relative_compute_slack": 0.00006316
+        },
+        "n_examples": 32,
+        "account": "replication",
+        "receipt": {
+          "realized_compute_flops": 100038000000000,
+          "relative_compute_error": 0.0003849
+        }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g2:a0",
+      "generation": 2,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "payload": {
+        "tier": 2,
+        "sound": true,
+        "loss": 3.75819,
+        "fitness": -3.75819,
+        "compute_budget_plan": {
+          "target_compute_flops": 100000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 9031,
+          "selected_flops_per_token": 10813400,
+          "planned_compute_flops": 99999900000000,
+          "relative_compute_slack": 7.512e-7
+        },
+        "n_examples": 32,
+        "account": "replication",
+        "receipt": {
+          "realized_compute_flops": 100042000000000,
+          "relative_compute_error": 0.0004249
+        }
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "payload": {
+        "from_tier": 2,
+        "to_tier": 3,
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.05148,
+        "required_confidence": 0.999,
+        "fdr_q": 0.05,
+        "ci_lower": 0.03388,
+        "ci_upper": 0.0669,
+        "p_value": 0,
+        "confidence": 0.9991647725308479,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.0195, 0.03553, 0.03845, 0.04049, 0.04196, 0.04316, 0.04413, 0.04504, 0.04594, 0.04677,
+          0.04757, 0.04822, 0.04892, 0.04966, 0.05036, 0.051, 0.0517, 0.0523, 0.05297, 0.05367,
+          0.05435, 0.05505, 0.05577, 0.05656, 0.05728, 0.05814, 0.05903, 0.06013, 0.06109, 0.06241,
+          0.06414, 0.0668, 0.08389
+        ],
+        "n_resamples": 8000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.0008352274691521069,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 2,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g2:a0",
+      "generation": 2,
+      "payload": {
+        "from_tier": 2,
+        "to_tier": 3,
+        "promote": false,
+        "reason": "CI_CROSSES_ZERO|CONFIDENCE_BELOW_THRESHOLD",
+        "observed_diff": 0.016,
+        "required_confidence": 0.999,
+        "fdr_q": 0.05,
+        "ci_lower": -0.00126,
+        "ci_upper": 0.03371,
+        "p_value": 0.0435,
+        "confidence": 0.9409352042466835,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          -0.01763, -0.00091, 0.00235, 0.00404, 0.00542, 0.0065, 0.00738, 0.00833, 0.0093, 0.01013,
+          0.01103, 0.01183, 0.01268, 0.01332, 0.01406, 0.01471, 0.01549, 0.01648, 0.01718, 0.01789,
+          0.0187, 0.01944, 0.02022, 0.02105, 0.02192, 0.02292, 0.024, 0.02508, 0.02624, 0.02773,
+          0.02987, 0.03272, 0.04274
+        ],
+        "n_resamples": 2000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 87,
+        "tail_lower_bound": 0.030936257423906474,
+        "tail_upper_bound": 0.05906479575331651,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 1,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "rejected"
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "tier": 3,
+        "sound": true,
+        "loss": 3.27901,
+        "fitness": -3.27901,
+        "compute_budget_plan": {
+          "target_compute_flops": 400000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 9598,
+          "selected_flops_per_token": 40697900,
+          "planned_compute_flops": 399993000000000,
+          "relative_compute_slack": 0.00001786
+        },
+        "n_examples": 32,
+        "width_multiplier": 2,
+        "account": "transfer",
+        "receipt": {
+          "realized_compute_flops": 401226000000000,
+          "relative_compute_error": 0.003064
+        }
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "payload": {
+        "from_tier": 3,
+        "to_tier": "best",
+        "promote": true,
+        "reason": "LOSS_IMPROVED",
+        "observed_diff": 0.0331,
+        "required_confidence": 0.999,
+        "fdr_q": 0.05,
+        "ci_lower": 0.02252,
+        "ci_upper": 0.0442,
+        "p_value": 0,
+        "confidence": 0.9991647725308479,
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.01333, 0.02298, 0.0247, 0.02584, 0.02673, 0.02751, 0.02816, 0.02883, 0.02947, 0.03,
+          0.0305, 0.03095, 0.03143, 0.03182, 0.03224, 0.03271, 0.03315, 0.03359, 0.03404, 0.03451,
+          0.03493, 0.03538, 0.03583, 0.03639, 0.03694, 0.03751, 0.03814, 0.03879, 0.03957, 0.04044,
+          0.04172, 0.04353, 0.05911
+        ],
+        "n_resamples": 8000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.0008352274691521069,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 2,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "fdr_verdict": "accepted"
+      }
+    },
+    {
+      "event_type": "incumbent.updated",
+      "proposal_id": "sim:g2:a28",
+      "generation": 2,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "previous": "7f0ff9fec5b7",
+        "reason": "tier3_gate",
+        "replaced": true,
+        "tier_losses": { "1": 4.24036, "2": 3.72271, "3": 3.27901 }
+      }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a0",
+      "generation": 3,
+      "candidate_arch_hash": "3153e9773d4a",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a0",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "failed", "detail": "no_token_budget" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a1",
+      "generation": 3,
+      "candidate_arch_hash": "a38ef92799cf",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a1",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a2",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a2",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a3",
+      "generation": 3,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a3",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a4",
+      "generation": 3,
+      "candidate_arch_hash": "2f5db2e6ba37",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a4",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a5",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a5",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a6",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a6",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a7",
+      "generation": 3,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a7",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a8",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a8",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a9",
+      "generation": 3,
+      "candidate_arch_hash": "08ca7fb0b964",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a9",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a10",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a10",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a11",
+      "generation": 3,
+      "candidate_arch_hash": "81c2378d136e",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a11",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a12",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a12",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a13",
+      "generation": 3,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a13",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a14",
+      "generation": 3,
+      "candidate_arch_hash": "c9a843fa74d5",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a14",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "failed", "detail": "no_token_budget" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a15",
+      "generation": 3,
+      "candidate_arch_hash": "a751a11721bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a15",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a16",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a16",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a17",
+      "generation": 3,
+      "candidate_arch_hash": "a38ef92799cf",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a17",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a18",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a18",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a19",
+      "generation": 3,
+      "candidate_arch_hash": "a9e2d4fd87bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a19",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a20",
+      "generation": 3,
+      "candidate_arch_hash": "81c2378d136e",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a20",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a21",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a21",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a22",
+      "generation": 3,
+      "candidate_arch_hash": "3153e9773d4a",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a22",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "failed", "detail": "no_token_budget" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a23",
+      "generation": 3,
+      "candidate_arch_hash": "076acf30dac8",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a23",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a24",
+      "generation": 3,
+      "candidate_arch_hash": "a9e2d4fd87bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a24",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a25",
+      "generation": 3,
+      "candidate_arch_hash": "a9e2d4fd87bc",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a25",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a26",
+      "generation": 3,
+      "candidate_arch_hash": "7f0ff9fec5b7",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a26",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a27",
+      "generation": 3,
+      "candidate_arch_hash": "d67c62329284",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a27",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a28",
+      "generation": 3,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a28",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a29",
+      "generation": 3,
+      "candidate_arch_hash": "fc232eac39b7",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a29",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a30",
+      "generation": 3,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a30",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a31",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a31",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a32",
+      "generation": 3,
+      "candidate_arch_hash": "a9e2d4fd87bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a32",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a33",
+      "generation": 3,
+      "candidate_arch_hash": "08ca7fb0b964",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a33",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a34",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a34",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a35",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a35",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a36",
+      "generation": 3,
+      "candidate_arch_hash": "81c2378d136e",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a36",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a37",
+      "generation": 3,
+      "candidate_arch_hash": "a38ef92799cf",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a37",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a38",
+      "generation": 3,
+      "candidate_arch_hash": "2f5db2e6ba37",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a38",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a39",
+      "generation": 3,
+      "candidate_arch_hash": "fc232eac39b7",
+      "origin_parent_arch_hashes": ["e99af81faae3"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a39",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a40",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a40",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a41",
+      "generation": 3,
+      "candidate_arch_hash": "a9e2d4fd87bc",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a41",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a42",
+      "generation": 3,
+      "candidate_arch_hash": "2f5db2e6ba37",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a42",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a43",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a43",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a44",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a44",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a45",
+      "generation": 3,
+      "candidate_arch_hash": "e4df851c8e96",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a45",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a46",
+      "generation": 3,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a46",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a47",
+      "generation": 3,
+      "candidate_arch_hash": "81c2378d136e",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a47",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a48",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a48",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a49",
+      "generation": 3,
+      "candidate_arch_hash": "2f5db2e6ba37",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a49",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a50",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "clone" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a50",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a51",
+      "generation": 3,
+      "candidate_arch_hash": "56094cdbc8ac",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "e99af81faae3"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a51",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a52",
+      "generation": 3,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "clone" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a52",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a53",
+      "generation": 3,
+      "candidate_arch_hash": "fc232eac39b7",
+      "origin_parent_arch_hashes": ["e99af81faae3", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "remove_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a53",
+      "generation": 3,
+      "payload": { "gate": "dedup_historical", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a54",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "1c41a1b4b6fd"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "add_node" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a54",
+      "generation": 3,
+      "payload": { "gate": "dedup_intra", "status": "failed" }
+    },
+    {
+      "event_type": "proposal.proposed",
+      "proposal_id": "sim:g3:a55",
+      "generation": 3,
+      "candidate_arch_hash": "817679e2059e",
+      "origin_parent_arch_hashes": ["1c41a1b4b6fd", "7f0ff9fec5b7"],
+      "payload": { "actions": [{ "operator": "crossover" }, { "operator": "modify_param" }] }
+    },
+    {
+      "event_type": "proposal.validated",
+      "proposal_id": "sim:g3:a55",
+      "generation": 3,
+      "payload": { "gate": "tier0", "status": "passed" }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g3:a4",
+      "generation": 3,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.92872,
+          "q50": 4.97106,
+          "q84": 5.01339,
+          "bound": 4.88808,
+          "rank": 6
+        },
+        "audit": { "drawn": true, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g3:a8",
+      "generation": 3,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": { "q16": 4.33521, "q50": 4.36668, "q84": 4.39814, "bound": 4.305, "rank": 1 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g3:a9",
+      "generation": 3,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.77158,
+          "q50": 4.81529,
+          "q84": 4.859,
+          "bound": 4.72961,
+          "rank": 5
+        },
+        "audit": { "drawn": false, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g3:a11",
+      "generation": 3,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.48786,
+          "q50": 4.52705,
+          "q84": 4.56625,
+          "bound": 4.45023,
+          "rank": 3
+        }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g3:a23",
+      "generation": 3,
+      "payload": {
+        "tier": 1,
+        "selected": true,
+        "reason_code": "screen_selected",
+        "prediction": {
+          "q16": 4.40677,
+          "q50": 4.46104,
+          "q84": 4.51532,
+          "bound": 4.35466,
+          "rank": 2
+        }
+      }
+    },
+    {
+      "event_type": "proposal.screened",
+      "proposal_id": "sim:g3:a55",
+      "generation": 3,
+      "payload": {
+        "tier": 1,
+        "selected": false,
+        "reason_code": "screened_out",
+        "prediction": {
+          "q16": 4.58178,
+          "q50": 4.61851,
+          "q84": 4.65524,
+          "bound": 4.54653,
+          "rank": 4
+        },
+        "audit": { "drawn": false, "probability": 0.33333 }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g3:a4",
+      "generation": 3,
+      "candidate_arch_hash": "2f5db2e6ba37",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.98031,
+        "fitness": -4.98031,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 132,
+          "selected_flops_per_token": 147456000,
+          "planned_compute_flops": 19931300000000,
+          "relative_compute_slack": 0.003433
+        },
+        "n_examples": 32,
+        "account": "audit",
+        "receipt": {
+          "realized_compute_flops": 19952100000000,
+          "relative_compute_error": -0.002394
+        }
+      }
+    },
+    {
+      "event_type": "audit.recorded",
+      "proposal_id": "sim:g3:a4",
+      "generation": 3,
+      "candidate_arch_hash": "2f5db2e6ba37",
+      "payload": {
+        "tier": 1,
+        "probability": 0.33333,
+        "observed_diff": -0.73995,
+        "screen_missed": false,
+        "audience": "auditor",
+        "released": false
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g3:a8",
+      "generation": 3,
+      "candidate_arch_hash": "92f3d8c1cd5b",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.26276,
+        "fitness": -4.26276,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 1460,
+          "selected_flops_per_token": 13369300,
+          "planned_compute_flops": 19987700000000,
+          "relative_compute_slack": 0.0006148
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": {
+          "realized_compute_flops": 19991100000000,
+          "relative_compute_error": -0.0004452
+        }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g3:a11",
+      "generation": 3,
+      "candidate_arch_hash": "81c2378d136e",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.59052,
+        "fitness": -4.59052,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 4905,
+          "selected_flops_per_token": 3981310,
+          "planned_compute_flops": 19997000000000,
+          "relative_compute_slack": 0.0001492
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": { "realized_compute_flops": 20105100000000, "relative_compute_error": 0.005256 }
+      }
+    },
+    {
+      "event_type": "proposal.evaluated",
+      "proposal_id": "sim:g3:a23",
+      "generation": 3,
+      "candidate_arch_hash": "076acf30dac8",
+      "payload": {
+        "tier": 1,
+        "sound": true,
+        "loss": 4.37783,
+        "fitness": -4.37783,
+        "compute_budget_plan": {
+          "target_compute_flops": 20000000000000,
+          "global_batch": 8,
+          "sequence_length": 128,
+          "steps": 479,
+          "selected_flops_per_token": 40697900,
+          "planned_compute_flops": 19962100000000,
+          "relative_compute_slack": 0.001893
+        },
+        "n_examples": 32,
+        "account": "search",
+        "receipt": {
+          "realized_compute_flops": 19983900000000,
+          "relative_compute_error": -0.0008034
+        }
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g3:a8",
+      "generation": 3,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": false,
+        "reason": "LOSS_NOT_IMPROVED",
+        "observed_diff": -0.0224,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "fdr_verdict": "rejected"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g3:a23",
+      "generation": 3,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": false,
+        "reason": "LOSS_NOT_IMPROVED",
+        "observed_diff": -0.13747,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "fdr_verdict": "rejected"
+      }
+    },
+    {
+      "event_type": "proposal.promotion_decision",
+      "proposal_id": "sim:g3:a11",
+      "generation": 3,
+      "payload": {
+        "from_tier": 1,
+        "to_tier": 2,
+        "promote": false,
+        "reason": "LOSS_NOT_IMPROVED",
+        "observed_diff": -0.35016,
+        "required_confidence": 0.95,
+        "fdr_q": 0.05,
+        "fdr_verdict": "rejected"
+      }
+    },
+    {
+      "event_type": "selection.frozen",
+      "proposal_id": "target:selection",
+      "generation": 4,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "champion": "1c41a1b4b6fd",
+        "reference": "e99af81faae3",
+        "policy": "BaselineAllocationPolicy@v0",
+        "state_hash": "c3fad655",
+        "analysis": {
+          "estimand": "mean loss per token on the sealed set, reference minus chosen design, at the target configuration",
+          "estimator": "bca_paired",
+          "confidence_level": 0.95,
+          "required_confidence": 0.999,
+          "sealed_set": "44f2726e",
+          "n_examples": 256
+        }
+      }
+    },
+    {
+      "event_type": "target.planned",
+      "proposal_id": "target:plan",
+      "generation": 4,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "axes": [
+          { "axis": "width", "from": 128, "to": 2304, "rule": "u-μP" },
+          { "axis": "depth", "from": 7, "to": 21, "rule": "u-μP residual scaling" },
+          { "axis": "tokens", "from": 9828352, "to": 123151056896, "rule": "schedule in tokens" }
+        ],
+        "tested": [
+          { "tier": 1, "width": 128, "depth": 7, "params": 2428672 },
+          { "tier": 3, "width": 256, "depth": 7, "params": 7609856 }
+        ],
+        "target": { "width": 2304, "depth": 21, "params": 1356793344 },
+        "reference": { "width": 4096, "depth": 6, "params": 1241620480 },
+        "evidence": "untested"
+      }
+    },
+    {
+      "event_type": "target.evaluated",
+      "proposal_id": "target:reference",
+      "generation": 4,
+      "candidate_arch_hash": "145c410422fd",
+      "payload": {
+        "role": "reference",
+        "source_arch_hash": "e99af81faae3",
+        "compute_budget_plan": {
+          "target_compute_flops": 1e21,
+          "global_batch": 1024,
+          "sequence_length": 128,
+          "steps": 1035576,
+          "selected_flops_per_token": 7367290000,
+          "planned_compute_flops": 1e21,
+          "relative_compute_slack": 8.771e-8
+        },
+        "receipt": { "realized_compute_flops": 1.00275e21, "relative_compute_error": 0.002748 },
+        "loss": 2.27995,
+        "n_examples": 256,
+        "account": "confirmation",
+        "diagnostics": {
+          "band": [0.8, 1.25],
+          "coordinate": [1.1002, 1.01235, 0.98404, 0.94636, 1.00011, 1.05404, 0.98298, 0.98784],
+          "spectral": [1.04414, 0.95474, 0.98474, 0.96615, 0.95682, 1.07638, 1.05817, 0.94161]
+        }
+      }
+    },
+    {
+      "event_type": "target.evaluated",
+      "proposal_id": "target:champion",
+      "generation": 4,
+      "candidate_arch_hash": "b12c452557c3",
+      "payload": {
+        "role": "champion",
+        "source_arch_hash": "1c41a1b4b6fd",
+        "compute_budget_plan": {
+          "target_compute_flops": 1e21,
+          "global_batch": 1024,
+          "sequence_length": 128,
+          "steps": 939568,
+          "selected_flops_per_token": 8120110000,
+          "planned_compute_flops": 1e21,
+          "relative_compute_slack": 2.399e-7
+        },
+        "receipt": { "realized_compute_flops": 1.00003e21, "relative_compute_error": 0.00002889 },
+        "loss": 2.25288,
+        "n_examples": 256,
+        "account": "confirmation",
+        "diagnostics": {
+          "band": [0.8, 1.25],
+          "coordinate": [1.0167, 1.06091, 1.05522, 1.07941, 0.9681, 0.96197, 1.06878, 1.02258],
+          "spectral": [1.00024, 0.94154, 0.98055, 0.94749, 0.93081, 1.02199, 1.07629, 0.99344]
+        }
+      }
+    },
+    {
+      "event_type": "outcome.validated",
+      "proposal_id": "target:validation",
+      "generation": 4,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "status": "valid",
+        "path": "metric",
+        "checks": [
+          "the sealed set stayed out of the search",
+          "it stayed out of training",
+          "the metric was fixed with the analysis",
+          "no evaluator that shaped training scores this comparison"
+        ]
+      }
+    },
+    {
+      "event_type": "confirmation.decided",
+      "proposal_id": "target:confirmation",
+      "generation": 4,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "observed_diff": 0.02707,
+        "ci_lower": 0.02355,
+        "ci_upper": 0.03069,
+        "p_value": 0,
+        "required_confidence": 0.999,
+        "reason": "LOSS_IMPROVED",
+        "bootstrap_method": "bca_paired",
+        "bootstrap_quantiles": [
+          0.0196, 0.02371, 0.0243, 0.02466, 0.02495, 0.0252, 0.02544, 0.02563, 0.02581, 0.02599,
+          0.02616, 0.02632, 0.02648, 0.02664, 0.02678, 0.02693, 0.02707, 0.02723, 0.02738, 0.02752,
+          0.02767, 0.02784, 0.02798, 0.02816, 0.02832, 0.02851, 0.0287, 0.02892, 0.02918, 0.02951,
+          0.0299, 0.03048, 0.0338
+        ],
+        "n_resamples": 8000,
+        "tail_initial_resamples": 2000,
+        "tail_count": 0,
+        "tail_lower_bound": 0,
+        "tail_upper_bound": 0.0008352274691521069,
+        "monte_carlo_error": 0.01,
+        "tail_stage": 2,
+        "tail_schedule_version": "b-4b-16b-64b-threefry-v1",
+        "n_examples": 256,
+        "status": "supported"
+      }
+    },
+    {
+      "event_type": "claim.recorded",
+      "proposal_id": "target:claim",
+      "generation": 4,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "status": "supported",
+        "estimand": "mean loss per token on the sealed set, reference minus chosen design, at the target configuration",
+        "baseline": "e99af81faae3",
+        "scope": {
+          "width": 2304,
+          "depth": 21,
+          "params": 1356793344,
+          "tokens": 123151056896,
+          "compute_flops": 1e21,
+          "sequence_length": 128
+        },
+        "uncertainty": "sealed examples, for this trained pair",
+        "contents": [
+          "claim and estimand",
+          "chosen design and baseline",
+          "selection history and policy",
+          "compute receipts",
+          "planned scale step",
+          "measurement protocol and sealed set",
+          "uncertainty model",
+          "revocation triggers"
+        ],
+        "revoked_by": [
+          "change to an operator contract",
+          "change to the optimizer",
+          "change to the data",
+          "a failed target anchor"
+        ]
+      }
+    },
+    {
+      "event_type": "claim.verified",
+      "proposal_id": "target:verified",
+      "generation": 4,
+      "candidate_arch_hash": "1c41a1b4b6fd",
+      "payload": {
+        "verifier": "niru-site trace replay",
+        "checks": [
+          { "check": "selection and analysis froze before the seal opened", "passed": true },
+          { "check": "every compute receipt is within its tolerance", "passed": true },
+          { "check": "the estimator, rerun, gives the same interval", "passed": true },
+          {
+            "check": "the tail schedule, rerun, stops at the same count and outcome",
+            "passed": true
+          }
+        ],
+        "passed": true
+      }
+    }
+  ]
+}
