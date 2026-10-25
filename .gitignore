@@ -1,0 +1,21 @@
+.DS_Store
+.env
+.env.*
+.wrangler/
+
+# Local leftovers from the old Astro build and tooling.
+node_modules/
+dist/
+.astro/
+out/
+test-results/
+playwright-report/
+.venv/
+.venv-qa/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# The planning interview is an operator-local execution record, not site source.
+/plans/
